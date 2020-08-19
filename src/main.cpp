@@ -11,9 +11,31 @@ https://circuitdigest.com/microcontroller-projects/esp32-ble-client-connecting-t
 
 BLEMidi bleMidi("Maxime's MIDI device");
 
+void onNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)
+{
+  Serial.print("Received note on : channel ");
+  Serial.print(channel);
+  Serial.print(", note ");
+  Serial.print(note);
+  Serial.print(", velocity ");
+  Serial.println(velocity);
+}
+
+void onNoteOff(uint8_t channel, uint8_t note, uint8_t velocity)
+{
+  Serial.print("Received note off : channel ");
+  Serial.print(channel);
+  Serial.print(", note ");
+  Serial.print(note);
+  Serial.print(", velocity ");
+  Serial.println(velocity);
+}
+
 void setup() {
   Serial.begin(115200);
   bleMidi.begin();
+  bleMidi.setNoteOnCallback(onNoteOn);
+  bleMidi.setNoteOffCallback(onNoteOff);
 }
 
 void loop() {

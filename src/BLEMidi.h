@@ -6,6 +6,12 @@
 #include <BLEServer.h>
 #include <BLE2902.h>
 
+class MidiCallbacks {
+public:
+  void (*noteOn)(uint8_t channel, uint8_t note, uint8_t velocity) = nullptr;
+  void (*noteOff)(uint8_t channel, uint8_t note, uint8_t velocity) = nullptr;
+};
+
 class BLEMidi {
 public:
     BLEMidi(std::string deviceName);
@@ -19,12 +25,17 @@ public:
     void programChange(uint8_t channel, uint8_t program);
     //void pitchBend();
 
+    void setNoteOnCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity));
+    void setNoteOffCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity));
+
 private:
     std::string deviceName;
     BLECharacteristic *pCharacteristic;
     bool deviceConnected = false;
     std::string SERVICE_UUID = "03b80e5a-ede8-4b33-a751-6ce34ec4c700";
     std::string CHARACTERISTIC_UUID = "7772e5db-3868-4112-a1a9-f2669d106bf3";
+    MidiCallbacks midiCallbacks;
+
 };
 
 class MyServerCallbacks: public BLEServerCallbacks {
@@ -42,6 +53,13 @@ public:
 
 private:
     bool *deviceConnected;
+};
+
+class CharacteristicCallback: public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pCharacteristic);
+    MidiCallbacks& midiCallbacks;
+public:
+    CharacteristicCallback(MidiCallbacks& callbacks);
 };
 
 #endif

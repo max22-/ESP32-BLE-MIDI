@@ -20,6 +20,7 @@ void BLEMidi::begin()
         BLECharacteristic::PROPERTY_WRITE_NR
     );
     pCharacteristic->addDescriptor(new BLE2902());
+    pCharacteristic->setCallbacks(new CharacteristicCallback(midiCallbacks));
     pService->start();
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
     pAdvertising->addServiceUUID(pService->getUUID());
@@ -105,4 +106,35 @@ void BLEMidi::programChange(uint8_t channel, uint8_t program)
     if(program > 127)
         return;
     sendPacket(midiPacket, sizeof(midiPacket));
+}
+
+void BLEMidi::setNoteOnCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
+{
+    midiCallbacks.noteOn = callback;
+}
+
+void BLEMidi::setNoteOffCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
+{
+    midiCallbacks.noteOff = callback;
+}
+
+CharacteristicCallback::CharacteristicCallback(MidiCallbacks& midiCallbacks) : midiCallbacks(midiCallbacks) {}
+
+void CharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic)
+{
+    std::string rxValue = pCharacteristic->getValue();
+
+    if (rxValue.length() > 0) {
+        switch(rxValue[2] >> 4) {
+            case 0x9:
+                if(midiCallbacks.noteOn != nullptr && rxValue.length() >= 5)
+                    midiCallbacks.noteOn(rxValue[2] & 0xF, rxValue[3], rxValue[4]);
+                break;
+            case 0x8:
+                if(midiCallbacks.noteOff != nullptr && rxValue.length() >= 5)
+                    midiCallbacks.noteOff(rxValue[2] & 0xF, rxValue[3], rxValue[4]);
+                break;
+            
+        }
+    }
 }
