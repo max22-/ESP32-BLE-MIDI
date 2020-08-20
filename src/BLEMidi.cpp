@@ -98,7 +98,7 @@ void BLEMidi::programChange(uint8_t channel, uint8_t program)
     uint8_t midiPacket[] = {
         0x80,  // header
         0x80,  // timestamp, not implemented 
-        0xC0 | channel, // 0xA0 : program change
+        0xC0 | channel, // 0xC0 : program change
         program,
     };
     if(channel > 15)
@@ -106,6 +106,10 @@ void BLEMidi::programChange(uint8_t channel, uint8_t program)
     if(program > 127)
         return;
     sendPacket(midiPacket, sizeof(midiPacket));
+}
+
+void pitchBend(byte channel, byte msb, byte lsb) {
+  pitchBend = {0x0E, 0xE0 | channel, lsb, msb};
 }
 
 void BLEMidi::setNoteOnCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
