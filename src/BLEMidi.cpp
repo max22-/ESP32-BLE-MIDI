@@ -45,7 +45,7 @@ void BLEMidi::noteOn(uint8_t channel, uint8_t note, uint8_t velocity)
     uint8_t midiPacket[] = {
         0x80,  // header
         0x80,  // timestamp, not implemented 
-        0x90 | channel, // 0x90 : note on
+        (uint8_t)(0x90 | channel), // 0x90 : note on
         note,
         velocity
     };
@@ -63,7 +63,7 @@ void BLEMidi::noteOff(uint8_t channel, uint8_t note, uint8_t velocity)
     uint8_t midiPacket[] = {
         0x80,  // header
         0x80,  // timestamp, not implemented 
-        0x80 | channel, // 0x80 : note off
+        (uint8_t)(0x80 | channel), // 0x80 : note off
         note,
         velocity
     };
@@ -81,7 +81,7 @@ void BLEMidi::controlChange(uint8_t channel, uint8_t controller, uint8_t value)
     uint8_t midiPacket[] = {
         0x80,  // header
         0x80,  // timestamp, not implemented 
-        0xB0 | channel, // 0xB0 : control change
+        (uint8_t)(0xB0 | channel), // 0xB0 : control change
         controller,
         value
     };
@@ -98,7 +98,7 @@ void BLEMidi::programChange(uint8_t channel, uint8_t program)
     uint8_t midiPacket[] = {
         0x80,  // header
         0x80,  // timestamp, not implemented 
-        0xC0 | channel, // 0xC0 : program change
+        (uint8_t)(0xC0 | channel), // 0xC0 : program change
         program,
     };
     if(channel > 15)
