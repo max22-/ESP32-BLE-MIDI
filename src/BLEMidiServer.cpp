@@ -2,8 +2,8 @@
 
 BLEMidiServer::BLEMidiServer(
     const std::string deviceName,
-    const void (*onConnectCallback)(BLEServer*),
-    const void (*onDisconnectCallback)(BLEServer*)
+    void (*const onConnectCallback)(BLEServer*),
+    void (*const onDisconnectCallback)(BLEServer*)
     ) 
     :   BLEMidi(deviceName), 
         onConnectCallback(onConnectCallback), 
@@ -14,7 +14,7 @@ void BLEMidiServer::begin()
 {
     BLEMidi::begin();
     BLEServer *pServer = BLEDevice::createServer();
-    pServer->setCallbacks(new MyServerCallbacks(&connected));
+    pServer->setCallbacks(new MyServerCallbacks(&connected, onConnectCallback, onDisconnectCallback));
     BLEService *pService = pServer->createService(BLEUUID(SERVICE_UUID));
     pCharacteristic = pService->createCharacteristic(
         BLEUUID(CHARACTERISTIC_UUID),
@@ -29,4 +29,25 @@ void BLEMidiServer::begin()
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
     pAdvertising->addServiceUUID(pService->getUUID());
     pAdvertising->start();
+}
+
+MyServerCallbacks::MyServerCallbacks(
+    bool *connected, 
+    void (*const onConnectCallback)(BLEServer*),
+    void (*const onDisconnectCallback)(BLEServer*)
+) : connected(connected),
+    onConnectCallback(onConnectCallback),
+    onDisconnectCallback(onDisconnectCallback)
+{}
+
+void MyServerCallbacks::onConnect(BLEServer* pServer) {
+    *connected = true;
+    if(onConnectCallback != nullptr)
+        onConnectCallback(pServer);
+};
+
+void MyServerCallbacks::onDisconnect(BLEServer* pServer) {
+    *connected = false;
+    if(onDisconnectCallback != nullptr)
+        onDisconnectCallback(pServer);
 }

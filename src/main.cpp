@@ -9,7 +9,10 @@ https://circuitdigest.com/microcontroller-projects/esp32-ble-client-connecting-t
 #include <Arduino.h>
 #include <BLEMidi.h>
 
-BLEMidiServer bleMidi("Maxime's MIDI device");
+void connected(BLEServer*);
+void disconnected(BLEServer*);
+
+BLEMidiServer bleMidi("Maxime's MIDI device", connected, disconnected);
 
 void onNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)
 {
@@ -29,6 +32,16 @@ void onNoteOff(uint8_t channel, uint8_t note, uint8_t velocity)
   Serial.print(note);
   Serial.print(", velocity ");
   Serial.println(velocity);
+}
+
+void connected(BLEServer *pServer)
+{
+  Serial.println("Connected");
+}
+
+void disconnected(BLEServer *pServer)
+{
+  Serial.println("Disconnected");
 }
 
 void setup() {

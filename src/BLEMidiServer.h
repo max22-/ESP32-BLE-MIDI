@@ -7,32 +7,33 @@ class BLEMidiServer : public BLEMidi {
 public:
     BLEMidiServer(
         const std::string deviceName, 
-        const void (*onConnectCallback)(BLEServer*) = nullptr,
-        const void (*onDisconnectCallback)(BLEServer*) = nullptr
+        void (*const onConnectCallback)(BLEServer*) = nullptr,
+        void (*const onDisconnectCallback)(BLEServer*) = nullptr
     );
     void begin();
 
 private:
-    const void (*onConnectCallback)(BLEServer* pServer);
-    const void (*onDisconnectCallback)(BLEServer* pServer);
+    void (*const onConnectCallback)(BLEServer* pServer);
+    void (*const onDisconnectCallback)(BLEServer* pServer);
 };
 
 
 class MyServerCallbacks: public BLEServerCallbacks {
 
-    void onConnect(BLEServer* pServer) {
-      *connected = true;
-    };
-
-    void onDisconnect(BLEServer* pServer) {
-      *connected = false;
-    }
+    void onConnect(BLEServer* pServer);
+    void onDisconnect(BLEServer* pServer);
 
 public:
-    MyServerCallbacks(bool *connected) : connected(connected) {}
+    MyServerCallbacks(
+        bool *connected, 
+        void (*const onConnectCallback)(BLEServer*),
+        void (*const onDisconnectCallback)(BLEServer*)
+    );
 
 private:
     bool *connected;
+    void (*const onConnectCallback)(BLEServer* pServer);
+    void (*const onDisconnectCallback)(BLEServer* pServer);
 };
 
 
