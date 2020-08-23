@@ -9,7 +9,7 @@ https://circuitdigest.com/microcontroller-projects/esp32-ble-client-connecting-t
 #include <Arduino.h>
 #include <BLEMidi.h>
 
-BLEMidi bleMidi("Maxime's MIDI device");
+BLEMidiServer bleMidi("Maxime's MIDI device");
 
 void onNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)
 {
