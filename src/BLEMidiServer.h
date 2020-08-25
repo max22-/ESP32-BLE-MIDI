@@ -7,14 +7,18 @@ class BLEMidiServer : public BLEMidi {
 public:
     BLEMidiServer(
         const std::string deviceName, 
-        void (*const onConnectCallback)(BLEServer*) = nullptr,
-        void (*const onDisconnectCallback)(BLEServer*) = nullptr
+        void (*const onConnectCallback)() = nullptr,
+        void (*const onDisconnectCallback)() = nullptr
     );
     void begin();
+    
 
 private:
-    void (*const onConnectCallback)(BLEServer* pServer);
-    void (*const onDisconnectCallback)(BLEServer* pServer);
+    virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
+    
+    void (*const onConnectCallback)();
+    void (*const onDisconnectCallback)();
+    BLECharacteristic* pCharacteristic;
 };
 
 
@@ -26,14 +30,15 @@ class MyServerCallbacks: public BLEServerCallbacks {
 public:
     MyServerCallbacks(
         bool *connected, 
-        void (*const onConnectCallback)(BLEServer*),
-        void (*const onDisconnectCallback)(BLEServer*)
+        void (*const onConnectCallback)(),
+        void (*const onDisconnectCallback)()
     );
 
 private:
     bool *connected;
-    void (*const onConnectCallback)(BLEServer* pServer);
-    void (*const onDisconnectCallback)(BLEServer* pServer);
+    void (*const onConnectCallback)();
+    void (*const onDisconnectCallback)();
+    BLECharacteristic *pCharacteristic;
 };
 
 

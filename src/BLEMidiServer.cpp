@@ -2,8 +2,8 @@
 
 BLEMidiServer::BLEMidiServer(
     const std::string deviceName,
-    void (*const onConnectCallback)(BLEServer*),
-    void (*const onDisconnectCallback)(BLEServer*)
+    void (*const onConnectCallback)(),
+    void (*const onDisconnectCallback)()
     ) 
     :   BLEMidi(deviceName), 
         onConnectCallback(onConnectCallback), 
@@ -31,10 +31,18 @@ void BLEMidiServer::begin()
     pAdvertising->start();
 }
 
+void BLEMidiServer::sendPacket(uint8_t *packet, uint8_t packetSize)
+{
+    if(!connected)
+        return;
+    pCharacteristic->setValue(packet, packetSize);
+    pCharacteristic->notify();
+}
+
 MyServerCallbacks::MyServerCallbacks(
     bool *connected, 
-    void (*const onConnectCallback)(BLEServer*),
-    void (*const onDisconnectCallback)(BLEServer*)
+    void (*const onConnectCallback)(),
+    void (*const onDisconnectCallback)()
 ) : connected(connected),
     onConnectCallback(onConnectCallback),
     onDisconnectCallback(onDisconnectCallback)
@@ -43,11 +51,11 @@ MyServerCallbacks::MyServerCallbacks(
 void MyServerCallbacks::onConnect(BLEServer* pServer) {
     *connected = true;
     if(onConnectCallback != nullptr)
-        onConnectCallback(pServer);
+        onConnectCallback();
 };
 
 void MyServerCallbacks::onDisconnect(BLEServer* pServer) {
     *connected = false;
     if(onDisconnectCallback != nullptr)
-        onDisconnectCallback(pServer);
+        onDisconnectCallback();
 }

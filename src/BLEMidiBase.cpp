@@ -16,14 +16,6 @@ bool BLEMidi::isConnected()
     return connected;
 }
 
-void BLEMidi::sendPacket(uint8_t *packet, uint8_t packetSize)
-{
-    if(!connected)
-        return;
-    pCharacteristic->setValue(packet, packetSize);
-    pCharacteristic->notify();
-}
-
 void BLEMidi::noteOn(uint8_t channel, uint8_t note, uint8_t velocity)
 {
     uint8_t midiPacket[] = {
