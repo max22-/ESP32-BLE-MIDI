@@ -22,11 +22,13 @@ void BLEMidiClient::begin()
 
 int BLEMidiClient::scan()
 {
+    if(pBLEScan == nullptr)
+        return 0;
+    pBLEScan->clearResults();
     foundDevices = pBLEScan->start(3);
     Serial.printf("Found %d device(s)\n", foundDevices.getCount());
     for(int i=0; i<foundDevices.getCount(); i++)
         Serial.println(foundDevices.getDevice(i).toString().c_str());
-    pBLEScan->clearResults();
     return foundDevices.getCount();
 }
 
@@ -34,8 +36,11 @@ bool BLEMidiClient::connect(int deviceIndex)
 {
     if(deviceIndex >= foundDevices.getCount())
         return false;
-    Serial.println("getDevice()");
+    Serial.printf("getDevice(%d)\n", deviceIndex);
     BLEAdvertisedDevice* device = new BLEAdvertisedDevice(foundDevices.getDevice(deviceIndex));
+    Serial.printf("device = 0x%x\n", (void*)device);
+    if(device == nullptr)
+        return false;
     Serial.printf("Connecting to %s\n", device->getAddress().toString().c_str());
     BLEClient* pClient = BLEDevice::createClient();
     pClient->setClientCallbacks(new ClientCallbacks(connected, onConnectCallback, onDisconnectCallback));
@@ -51,14 +56,15 @@ bool BLEMidiClient::connect(int deviceIndex)
     if(pRemoteCharacteristic == nullptr)
         return false;
     if(pRemoteCharacteristic->canNotify())
-        pRemoteCharacteristic->registerForNotify([](
+        pRemoteCharacteristic->registerForNotify([/*this*/](
             BLERemoteCharacteristic* pBLERemoteCharacteristic,
             uint8_t* pData,
             size_t length,
-            bool isNotify) { 
+            bool isNotify) {
+                //this->receivePacket(pData, length);
                 Serial.println("Received data !!!");
                 for(int i=0; i<length; i++)
-                    Serial.printf("%x ",pData[i], HEX);
+                    Serial.printf("%x ",pData[i]);
                 Serial.println();
             }
         );

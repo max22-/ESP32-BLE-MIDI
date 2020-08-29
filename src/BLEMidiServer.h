@@ -42,4 +42,13 @@ private:
 };
 
 
+class CharacteristicCallback: public BLECharacteristicCallbacks {
+public:
+    CharacteristicCallback(std::function<void(uint8_t*, uint8_t)> onWriteCallback);
+private:
+    void onWrite(BLECharacteristic *pCharacteristic);
+    std::function<void(uint8_t*, uint8_t)> onWriteCallback = nullptr;
+};
+
+
 #endif

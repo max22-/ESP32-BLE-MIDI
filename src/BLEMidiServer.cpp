@@ -24,7 +24,7 @@ void BLEMidiServer::begin()
         BLECharacteristic::PROPERTY_WRITE_NR
     );
     pCharacteristic->addDescriptor(new BLE2902());
-    pCharacteristic->setCallbacks(new CharacteristicCallback(midiCallbacks));
+    pCharacteristic->setCallbacks(new CharacteristicCallback([this](uint8_t *data, uint8_t size) { this->receivePacket(data, size); }));
     pService->start();
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
     pAdvertising->addServiceUUID(pService->getUUID());
@@ -58,4 +58,15 @@ void MyServerCallbacks::onDisconnect(BLEServer* pServer) {
     *connected = false;
     if(onDisconnectCallback != nullptr)
         onDisconnectCallback();
+}
+
+CharacteristicCallback::CharacteristicCallback(std::function<void(uint8_t*, uint8_t)> onWriteCallback) : onWriteCallback(onWriteCallback) {}
+
+void CharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic)
+{
+    std::string rxValue = pCharacteristic->getValue();
+
+    if (rxValue.length() > 0 && onWriteCallback != nullptr)
+        onWriteCallback((uint8_t*)rxValue.c_str(), rxValue.length());
+    
 }
