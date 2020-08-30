@@ -1,5 +1,13 @@
 #include "Midi.h"
 
+/*
+Midi documentation found here :
+https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
+
+Pitch bend:
+https://sites.uci.edu/camp2014/2014/04/30/managing-midi-pitchbend-messages/
+*/
+
 void Midi::noteOn(uint8_t channel, uint8_t note, uint8_t velocity)
 {
     uint8_t midiPacket[] = {
@@ -99,6 +107,88 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
     for(uint8_t i=0; i<size; i++)
         Serial.printf("%x ", data[i]);
     Serial.println();
+    //check data !!!!
+    uint8_t status = data[2];
+    uint8_t message = status >> 4;
+    uint8_t channel = status & 0xF;
+
+    uint8_t note = data[3];
+    uint8_t velocity = data[4];
+    uint8_t polyPressure = data[4];
+    uint8_t controller = data[3];
+    uint8_t controllerValue = data[4];
+    uint8_t program = data[3];
+    uint8_t channelPressure = data[3];
+    uint8_t lsb = data[3], msb = data[4];
+
+    switch(message) {
+
+        case 0b1000:    // Note off
+            Serial.printf("Note off, channel %d, note %d, velocity %d\n", channel, note, velocity);
+            break;
+
+        case 0b1001:    // Note on
+            Serial.printf("Note on, channel %d, note %d, velocity %d\n", channel, note, velocity);
+            break;
+
+        case 0b1010:    // Polyphonic key pressure (Aftertouch)
+            Serial.printf("Polyphonic key pressure, channel %d, note %d, velocity %d\n", channel, note, polyPressure);
+            break;
+
+        case 0b1011:    // Control Change
+            Serial.printf("Control Change, channel %d, controller %d, value %d\n", channel, controller, controllerValue);
+            if(controller >= 120) { // Reserved controllers, for "Channel Mode Messages"
+                Serial.println("Reserved controller, not implemented yet");
+                switch(controller) {
+                    case 120:       // All sounds off
+                        break;
+                    case 121:       // Reset all controllers
+                        break;
+                    case 122:       // Local control
+                        break;
+                    case 123:       // All Notes off
+                        break;
+                    case 124:       // Omni Mode Off
+                        break;
+                    case 125:       // Omni Mode On
+                        break;
+                    case 126:       // Mono Mode on (Poly off)
+                        break;
+                    case 127:       // Poly Mode on (Mono off)
+                        break;  
+                    default:
+                        break;
+                }
+            }
+            break;
+
+        case 0b1100:    // Program Change
+            Serial.printf("Program Change, channel %d, program %d\n", channel, program);
+            break;
+
+        case 0b1101:    // Channel pressure (Aftertouch)
+            Serial.printf("Channel pressure, channel %d, pressure %d\n", channel, channelPressure);
+            break;
+
+        case 0b1110:    // Pitch bend
+            {   // block because we declare variables (otherwise compile error)
+            Serial.printf("Pitch bend, channel %d, lsb %d, msb %d\n", channel, lsb, msb);
+            uint16_t integerPitchBend = ((msb & 127) << 7) | (lsb & 127);
+            Serial.printf("Integer value of pitch bend : %d\n", integerPitchBend);
+            float semitones = 4*(float)(integerPitchBend - 8192)/powf(2, 14);
+            Serial.printf("Pitch bend in semitones : %.2f\n", semitones);
+            break;
+            }
+
+        case 0b1111:
+            Serial.println("System common message, not implemented yet");
+            break;
+
+        default:
+            break;
+        
+    }
+
 }
 
 // ###################################
