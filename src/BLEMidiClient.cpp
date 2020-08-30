@@ -56,20 +56,26 @@ bool BLEMidiClient::connect(int deviceIndex)
     if(pRemoteCharacteristic == nullptr)
         return false;
     if(pRemoteCharacteristic->canNotify())
-        pRemoteCharacteristic->registerForNotify([/*this*/](
-            BLERemoteCharacteristic* pBLERemoteCharacteristic,
-            uint8_t* pData,
-            size_t length,
+        CallbackRegister::registerCallback(pRemoteCharacteristic, [this](    // We have to use the CallbackRegister class to be able to call the receivePacket member function as a callback
+            BLERemoteCharacteristic* pBLERemoteCharacteristic,          // A little bit overkill... ;)
+            uint8_t* pData, 
+            size_t length, 
             bool isNotify) {
-                //this->receivePacket(pData, length);
-                Serial.println("Received data !!!");
-                for(int i=0; i<length; i++)
-                    Serial.printf("%x ",pData[i]);
-                Serial.println();
-            }
-        );
+                receivePacket(pData, length);
+        });     
+                                                                            
+        pRemoteCharacteristic->registerForNotify(&CallbackRegister::mainCallback);
     connected=true;
     return true;
+}
+
+void BLEMidiClient::characteristicCallback(
+    BLERemoteCharacteristic* pBLERemoteCharacteristic,
+        uint8_t* pData,
+        size_t length,
+        bool isNotify) 
+{
+
 }
 
 void BLEMidiClient::sendPacket(uint8_t *packet, uint8_t packetSize)
@@ -100,5 +106,4 @@ void ClientCallbacks::onDisconnect(BLEClient *pClient)
     connected = false;
     if(onDisconnectCallback != nullptr)
         onDisconnectCallback();
-
 }

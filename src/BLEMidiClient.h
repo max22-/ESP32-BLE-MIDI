@@ -2,6 +2,7 @@
 #define BLE_MIDI_CLIENT_H
 
 #include "BLEMidiBase.h"
+#include "CallbackRegister.h"
 
 class BLEMidiClient : public BLEMidi {
 public:
@@ -15,6 +16,11 @@ public:
     bool connect(int deviceIndex);
 
 private:
+    void characteristicCallback(
+        BLERemoteCharacteristic* pBLERemoteCharacteristic,
+        uint8_t* pData,
+        size_t length,
+        bool isNotify);
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
 
     BLEScan *pBLEScan = nullptr;
@@ -22,6 +28,7 @@ private:
     BLERemoteCharacteristic* pRemoteCharacteristic;
     void (*const onConnectCallback)();
     void (*const onDisconnectCallback)();
+
 };
 
 class ClientCallbacks : public BLEClientCallbacks {
