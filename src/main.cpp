@@ -34,6 +34,12 @@ void onNoteOff(uint8_t channel, uint8_t note, uint8_t velocity)
   Serial.println(velocity);
 }
 
+void onControlChange(uint8_t channel, uint8_t controller, uint8_t value)
+{
+  if(controller == 125)
+    Serial.printf("Volume : %d\n", value*100/127);
+}
+
 void connected()
 {
   Serial.println("Connected");
@@ -49,6 +55,7 @@ void setup() {
   bleMidi.begin();
   bleMidi.setNoteOnCallback(onNoteOn);
   bleMidi.setNoteOffCallback(onNoteOff);
+  bleMidi.setControlChangeCallback(onControlChange);
 }
 
 void loop() {

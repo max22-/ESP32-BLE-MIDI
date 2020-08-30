@@ -124,10 +124,14 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
     switch(message) {
 
         case 0b1000:    // Note off
+            if(noteOffCallback != nullptr)
+                noteOffCallback(channel, note, velocity);
             Serial.printf("Note off, channel %d, note %d, velocity %d\n", channel, note, velocity);
             break;
 
         case 0b1001:    // Note on
+            if(noteOnCallback != nullptr)
+                noteOnCallback(channel, note, velocity);
             Serial.printf("Note on, channel %d, note %d, velocity %d\n", channel, note, velocity);
             break;
 
@@ -136,6 +140,8 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
             break;
 
         case 0b1011:    // Control Change
+            if(controlChangeCallback != nullptr)
+                controlChangeCallback(channel, controller, controllerValue);
             Serial.printf("Control Change, channel %d, controller %d, value %d\n", channel, controller, controllerValue);
             if(controller >= 120) { // Reserved controllers, for "Channel Mode Messages"
                 Serial.println("Reserved controller, not implemented yet");
@@ -163,6 +169,8 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
             break;
 
         case 0b1100:    // Program Change
+            if(programChangeCallback != nullptr)
+                programChangeCallback(channel, program);
             Serial.printf("Program Change, channel %d, program %d\n", channel, program);
             break;
 
