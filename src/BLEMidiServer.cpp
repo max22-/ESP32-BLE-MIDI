@@ -15,9 +15,9 @@ void BLEMidiServer::begin()
     BLEMidi::begin();
     BLEServer *pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks(&connected, onConnectCallback, onDisconnectCallback));
-    BLEService *pService = pServer->createService(BLEUUID(SERVICE_UUID));
+    BLEService *pService = pServer->createService(BLEUUID(MIDI_SERVICE_UUID));
     pCharacteristic = pService->createCharacteristic(
-        BLEUUID(CHARACTERISTIC_UUID),
+        BLEUUID(MIDI_CHARACTERISTIC_UUID),
         BLECharacteristic::PROPERTY_READ   |
         BLECharacteristic::PROPERTY_WRITE  |
         BLECharacteristic::PROPERTY_NOTIFY |

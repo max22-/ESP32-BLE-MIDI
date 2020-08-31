@@ -25,19 +25,34 @@ int BLEMidiClient::scan()
     if(pBLEScan == nullptr)
         return 0;
     pBLEScan->clearResults();
-    foundDevices = pBLEScan->start(3);
+    foundMidiDevices.clear();
+    BLEScanResults foundDevices = pBLEScan->start(3);
     Serial.printf("Found %d device(s)\n", foundDevices.getCount());
-    for(int i=0; i<foundDevices.getCount(); i++)
-        Serial.println(foundDevices.getDevice(i).toString().c_str());
-    return foundDevices.getCount();
+    for(int i=0; i<foundDevices.getCount(); i++) {
+        BLEAdvertisedDevice device = foundDevices.getDevice(i);
+        Serial.println(device.toString().c_str());
+        if(device.getServiceUUID().equals(BLEUUID(MIDI_SERVICE_UUID))) {
+            Serial.println("It is a MIDI device");
+            foundMidiDevices.push_back(device);
+        }
+        
+    }
+    return foundMidiDevices.size();
 }
 
-bool BLEMidiClient::connect(int deviceIndex)
+BLEAdvertisedDevice* BLEMidiClient::getScannedDevice(uint32_t deviceIndex)
 {
-    if(deviceIndex >= foundDevices.getCount())
+    if(deviceIndex >= foundMidiDevices.size())
+        return nullptr;
+    return &foundMidiDevices.at(deviceIndex);
+}
+
+bool BLEMidiClient::connect(uint32_t deviceIndex)
+{
+    if(deviceIndex >= foundMidiDevices.size())
         return false;
     Serial.printf("getDevice(%d)\n", deviceIndex);
-    BLEAdvertisedDevice* device = new BLEAdvertisedDevice(foundDevices.getDevice(deviceIndex));
+    BLEAdvertisedDevice* device = new BLEAdvertisedDevice(foundMidiDevices.at(deviceIndex));
     Serial.printf("device = 0x%x\n", (void*)device);
     if(device == nullptr)
         return false;
@@ -48,11 +63,11 @@ bool BLEMidiClient::connect(int deviceIndex)
     if(!pClient->connect(device))
         return false;
     Serial.println("pClient->getService()");
-    BLERemoteService* pRemoteService = pClient->getService(SERVICE_UUID.c_str());
+    BLERemoteService* pRemoteService = pClient->getService(MIDI_SERVICE_UUID.c_str());
     if(pRemoteService == nullptr)
         return false;
     Serial.println("pRemoteService->getCharacteristic()");
-    pRemoteCharacteristic = pRemoteService->getCharacteristic(CHARACTERISTIC_UUID.c_str());
+    pRemoteCharacteristic = pRemoteService->getCharacteristic(MIDI_CHARACTERISTIC_UUID.c_str());
     if(pRemoteCharacteristic == nullptr)
         return false;
     if(pRemoteCharacteristic->canNotify())
@@ -68,7 +83,6 @@ bool BLEMidiClient::connect(int deviceIndex)
     connected=true;
     return true;
 }
-
 
 void BLEMidiClient::sendPacket(uint8_t *packet, uint8_t packetSize)
 {

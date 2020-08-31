@@ -1,6 +1,7 @@
 #ifndef BLE_MIDI_CLIENT_H
 #define BLE_MIDI_CLIENT_H
 
+#include <vector>
 #include "BLEMidiBase.h"
 #include "CallbackRegister.h"
 
@@ -12,20 +13,31 @@ public:
         void (*const onDisconnectCallback)() = nullptr
     );
     void begin();
+
+    /// Begins a scan, and returns the number of MIDI devices found.
     int scan();
-    bool connect(int deviceIndex);
+
+    /// Returns the nth scanned MIDI device, or nullptr in case of an error. 
+    /// Do not use the returned value if you perform another scan later, because it will be cleared.
+    BLEAdvertisedDevice* getScannedDevice(uint32_t deviceIndex);
+
+    /// Connects to the nth scanned MIDI device
+    bool connect(uint32_t deviceIndex);
+
 
 private:
+    /// This method is called by the base Midi class to send packets.
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
 
     BLEScan *pBLEScan = nullptr;
-    BLEScanResults foundDevices;
+    std::vector<BLEAdvertisedDevice> foundMidiDevices;
     BLERemoteCharacteristic* pRemoteCharacteristic;
     void (*const onConnectCallback)();
     void (*const onDisconnectCallback)();
 
 };
 
+/// Callbacks for connections and disconnections
 class ClientCallbacks : public BLEClientCallbacks {
 public:
     ClientCallbacks(
@@ -38,8 +50,8 @@ private:
     void onDisconnect(BLEClient*);
 
     bool& connected;
-    void (* const onConnectCallback)() = nullptr;
-    void (* const onDisconnectCallback)() = nullptr;
+    void (* const onConnectCallback)();
+    void (* const onDisconnectCallback)();
 };
 
 #endif

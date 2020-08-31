@@ -56,5 +56,11 @@ void loop() {
 Future work
 -----------
 
-Add a functionality to act as a client, to be able to initiate a connection to another Midi device.
+- Implement missing features (aftertouch, etc).
+- Make some examples
+- Add documentation, with Doxygen ?
+
+Add support for realtime messages ?
+
+
 
