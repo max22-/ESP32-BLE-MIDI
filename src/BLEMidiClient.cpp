@@ -69,14 +69,6 @@ bool BLEMidiClient::connect(int deviceIndex)
     return true;
 }
 
-void BLEMidiClient::characteristicCallback(
-    BLERemoteCharacteristic* pBLERemoteCharacteristic,
-        uint8_t* pData,
-        size_t length,
-        bool isNotify) 
-{
-
-}
 
 void BLEMidiClient::sendPacket(uint8_t *packet, uint8_t packetSize)
 {

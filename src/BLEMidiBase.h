@@ -8,13 +8,6 @@
 #include <functional>
 #include "Midi.h"
 
-class MidiCallbacks {
-public:
-  void (*noteOn)(uint8_t channel, uint8_t note, uint8_t velocity) = nullptr;
-  void (*noteOff)(uint8_t channel, uint8_t note, uint8_t velocity) = nullptr;
-};
-
-
 class BLEMidi : public Midi {
 public:
     BLEMidi(const std::string deviceName);
