@@ -1,4 +1,4 @@
-ESP32-BLE-Midi
+ESP32-BLE-MIDI
 ==============
 
 A small Arduino library to use Midi over Bluetooth Low Energy (BLE) on ESP32 boards.
