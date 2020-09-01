@@ -68,7 +68,7 @@ void loop() {
   else {
     int nDevices = bleMidi.scan();
     if(nDevices > 0) {
-      if(bleMidi.connect(0))
+      if(bleMidi.connect())
         Serial.println("Connection established");
       else
         Serial.println("Connection failed");

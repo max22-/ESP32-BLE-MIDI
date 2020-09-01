@@ -22,7 +22,7 @@ public:
     BLEAdvertisedDevice* getScannedDevice(uint32_t deviceIndex);
 
     /// Connects to the nth scanned MIDI device
-    bool connect(uint32_t deviceIndex);
+    bool connect(uint32_t deviceIndex = 0);
 
 
 private:
