@@ -60,7 +60,9 @@ Future work
 - Make some examples
 - Add documentation, with Doxygen ?
 
-Add support for realtime messages ?
+- Add support for realtime messages ?
+- Add debugging messages in BLEMidiServer ?
+
 
 
 
