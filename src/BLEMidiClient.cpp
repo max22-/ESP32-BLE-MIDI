@@ -1,75 +1,77 @@
 #include "BLEMidiClient.h"
-#include <Arduino.h>            // to remove when serial prints will be removed
 
-BLEMidiClient::BLEMidiClient(
-    const std::string deviceName,
-    void (*const onConnectCallback)(),
-    void (*const onDisconnectCallback)()
-    ) 
-    :   BLEMidi(deviceName),
-        onConnectCallback(onConnectCallback),
-        onDisconnectCallback(onDisconnectCallback)
-{}
+BLEMidiClient::BLEMidiClient(const std::string deviceName) : BLEMidi(deviceName) {}
 
 void BLEMidiClient::begin()
 {
     BLEMidi::begin();
-    pBLEScan = BLEDevice::getScan();
-    pBLEScan->setActiveScan(true);
-    pBLEScan->setInterval(100);
-    pBLEScan->setWindow(99);
 }
 
 int BLEMidiClient::scan()
 {
+    debug.println("Beginning scan...");
+    pBLEScan = BLEDevice::getScan();
     if(pBLEScan == nullptr)
         return 0;
+    pBLEScan->setActiveScan(true);
+    pBLEScan->setInterval(100);
+    pBLEScan->setWindow(99);
     pBLEScan->clearResults();
     foundMidiDevices.clear();
     BLEScanResults foundDevices = pBLEScan->start(3);
-    Serial.printf("Found %d device(s)\n", foundDevices.getCount());
+    debug.printf("Found %d BLE device(s)\n", foundDevices.getCount());
     for(int i=0; i<foundDevices.getCount(); i++) {
         BLEAdvertisedDevice device = foundDevices.getDevice(i);
-        Serial.println(device.toString().c_str());
+        auto deviceStr = "name = \"" + device.getName() + "\", address = "  + device.getAddress().toString();
         if(device.getServiceUUID().equals(BLEUUID(MIDI_SERVICE_UUID))) {
-            Serial.println("It is a MIDI device");
+            debug.println((" - BLE MIDI device : " + deviceStr).c_str());
             foundMidiDevices.push_back(device);
         }
-        
+        else
+            debug.printf((" - Other type of BLE device : " + deviceStr).c_str());
+        debug.printf("Total of BLE MIDI devices : %d\n", foundMidiDevices.size());
     }
     return foundMidiDevices.size();
 }
 
 BLEAdvertisedDevice* BLEMidiClient::getScannedDevice(uint32_t deviceIndex)
 {
-    if(deviceIndex >= foundMidiDevices.size())
+    if(deviceIndex >= foundMidiDevices.size()) {
+        debug.println("Scanned device not found because requested index is greater than the devices list");
         return nullptr;
+    }
     return &foundMidiDevices.at(deviceIndex);
 }
 
 bool BLEMidiClient::connect(uint32_t deviceIndex)
 {
-    if(deviceIndex >= foundMidiDevices.size())
+    debug.printf("Connecting to device number %d\n", deviceIndex);
+    if(deviceIndex >= foundMidiDevices.size()) {
+        debug.println("Cannot connect : device index is greater than the size of the MIDI devices lists.");
         return false;
-    Serial.printf("getDevice(%d)\n", deviceIndex);
+    }
     BLEAdvertisedDevice* device = new BLEAdvertisedDevice(foundMidiDevices.at(deviceIndex));
-    Serial.printf("device = 0x%x\n", (void*)device);
     if(device == nullptr)
         return false;
-    Serial.printf("Connecting to %s\n", device->getAddress().toString().c_str());
+    debug.printf("Address of the device : %s\n", device->getAddress().toString().c_str());
     BLEClient* pClient = BLEDevice::createClient();
     pClient->setClientCallbacks(new ClientCallbacks(connected, onConnectCallback, onDisconnectCallback));
-    Serial.println("pClient->connect()");
+    debug.println("pClient->connect()");
     if(!pClient->connect(device))
         return false;
-    Serial.println("pClient->getService()");
+    debug.println("pClient->getService()");
     BLERemoteService* pRemoteService = pClient->getService(MIDI_SERVICE_UUID.c_str());
-    if(pRemoteService == nullptr)
+    if(pRemoteService == nullptr) {
+        debug.println("Couldn't find remote service");
         return false;
-    Serial.println("pRemoteService->getCharacteristic()");
+    }
+    debug.println("pRemoteService->getCharacteristic()");
     pRemoteCharacteristic = pRemoteService->getCharacteristic(MIDI_CHARACTERISTIC_UUID.c_str());
-    if(pRemoteCharacteristic == nullptr)
+    if(pRemoteCharacteristic == nullptr) {
+        debug.println("Couldn't find remote characteristic");
         return false;
+    }
+    debug.println("Registering characteristic callback");
     if(pRemoteCharacteristic->canNotify())
         CallbackRegister::registerCallback(pRemoteCharacteristic, [this](    // We have to use the CallbackRegister class to be able to call the receivePacket member function as a callback
             BLERemoteCharacteristic* pBLERemoteCharacteristic,          // A little bit overkill... ;)
@@ -82,6 +84,15 @@ bool BLEMidiClient::connect(uint32_t deviceIndex)
         pRemoteCharacteristic->registerForNotify(&CallbackRegister::mainCallback);
     connected=true;
     return true;
+}
+
+void BLEMidiClient::setOnConnectCallback(void (*const onConnectCallback)())
+{
+    this->onConnectCallback = onConnectCallback;
+}
+void BLEMidiClient::setOnDisconnectCallback(void (*const onDisconnectCallback)())
+{
+    this->onDisconnectCallback = onDisconnectCallback;
 }
 
 void BLEMidiClient::sendPacket(uint8_t *packet, uint8_t packetSize)

@@ -12,7 +12,7 @@ and Arduino BLE_Client example sketch for ESP32 boards
 void connected();
 void disconnected();
 
-BLEMidiClient bleMidi("Maxime's MIDI device", connected, disconnected);
+BLEMidiClient bleMidi("Maxime's MIDI device");
 
 void onNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)
 {
@@ -53,9 +53,12 @@ void disconnected()
 void setup() {
   Serial.begin(115200);
   bleMidi.begin();
+  bleMidi.setOnConnectCallback(connected);
+  bleMidi.setOnDisconnectCallback(disconnected);
   bleMidi.setNoteOnCallback(onNoteOn);
   bleMidi.setNoteOffCallback(onNoteOff);
   bleMidi.setControlChangeCallback(onControlChange);
+  //bleMidi.enableDebugging();
 }
 
 void loop() {
