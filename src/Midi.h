@@ -2,6 +2,7 @@
 #define MIDI_H
 
 #include <Arduino.h>
+#include "Debug.h"
 
 class Midi {
 public:
@@ -18,9 +19,13 @@ public:
     void setControlChangeCallback(void (*callback)(uint8_t channel, uint8_t controller, uint8_t value));
     void setProgramChangeCallback(void (*callback)(uint8_t channel, uint8_t program));
 
+    void enableDebugging(Stream& debugStream = Serial);
+    void disableDebugging();
+
 protected:
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) = 0;
     void receivePacket(uint8_t *packet, uint8_t packetSize);
+    Debug debug;
 
 private:
     void (*noteOnCallback)(uint8_t, uint8_t, uint8_t) = nullptr;

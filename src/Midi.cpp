@@ -222,3 +222,11 @@ void Midi::setProgramChangeCallback(void (*callback)(uint8_t, uint8_t))
     programChangeCallback = callback;
 }
 
+void Midi::enableDebugging(Stream& debugStream) {
+    debug.enable(debugStream);
+}
+
+void Midi::disableDebugging()
+{
+    debug.disable();
+}
