@@ -11,8 +11,8 @@ public:
     void controlChange(uint8_t channel, uint8_t controller, uint8_t value);
     void programChange(uint8_t channel, uint8_t program);
     void pitchBend(uint8_t channel, uint8_t msb, uint8_t lsb);
-    void pitchBend(uint8_t channel, float semitones);   // semitones : from -2 to + 2 semitones.
-                                                        // Numbers outside of this range will be ignored.
+    void pitchBend(uint8_t channel, float semitones);   /// semitones : from -2 to + 2 semitones.
+                                                        /// Numbers outside of this range will be ignored.
 
     void setNoteOnCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity));
     void setNoteOffCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity));
