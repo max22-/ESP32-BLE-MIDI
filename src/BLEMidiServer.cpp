@@ -1,14 +1,6 @@
 #include "BLEMidiServer.h"
 
-BLEMidiServer::BLEMidiServer(
-    const std::string deviceName,
-    void (*const onConnectCallback)(),
-    void (*const onDisconnectCallback)()
-    ) 
-    :   BLEMidi(deviceName), 
-        onConnectCallback(onConnectCallback), 
-        onDisconnectCallback(onDisconnectCallback)
-{}
+BLEMidiServer::BLEMidiServer(const std::string deviceName) : BLEMidi(deviceName) { }
 
 void BLEMidiServer::begin()
 {
@@ -29,6 +21,16 @@ void BLEMidiServer::begin()
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
     pAdvertising->addServiceUUID(pService->getUUID());
     pAdvertising->start();
+}
+
+void BLEMidiServer::setOnConnectCallback(void (*const onConnectCallback)())
+{
+    this->onConnectCallback = onConnectCallback;
+}
+
+void BLEMidiServer::setOnDisconnectCallback(void (*const onDisconnectCallback)())
+{
+    this->onDisconnectCallback = onDisconnectCallback;
 }
 
 void BLEMidiServer::sendPacket(uint8_t *packet, uint8_t packetSize)

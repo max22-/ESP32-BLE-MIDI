@@ -5,19 +5,18 @@
 
 class BLEMidiServer : public BLEMidi {
 public:
-    BLEMidiServer(
-        const std::string deviceName, 
-        void (*const onConnectCallback)() = nullptr,
-        void (*const onDisconnectCallback)() = nullptr
-    );
+    BLEMidiServer(const std::string deviceName);
     void begin();
+
+    void setOnConnectCallback(void (*const onConnectCallback)());
+    void setOnDisconnectCallback(void (*const onDisconnectCallback)());
     
 
 private:
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
     
-    void (*const onConnectCallback)();
-    void (*const onDisconnectCallback)();
+    void (*onConnectCallback)() = nullptr;
+    void (*onDisconnectCallback)() = nullptr;
     BLECharacteristic* pCharacteristic;
 };
 
