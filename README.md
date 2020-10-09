@@ -8,48 +8,27 @@ Quick start
 -----------
 
 ```
+#include <Arduino.h>
 #include <BLEMidi.h>
 
-BLEMidi bleMidi("My awesome MIDI device");
-
-void onNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)
-{
-  Serial.print("Received note on : channel ");
-  Serial.print(channel);
-  Serial.print(", note ");
-  Serial.print(note);
-  Serial.print(", velocity ");
-  Serial.println(velocity);
-}
-
-void onNoteOff(uint8_t channel, uint8_t note, uint8_t velocity)
-{
-  Serial.print("Received note off : channel ");
-  Serial.print(channel);
-  Serial.print(", note ");
-  Serial.print(note);
-  Serial.print(", velocity ");
-  Serial.println(velocity);
-}
+BLEMidiServer bleMidi("Basic MIDI device");
 
 void setup() {
   Serial.begin(115200);
+  Serial.println("Initializing bluetooth");
   bleMidi.begin();
-  bleMidi.setNoteOnCallback(onNoteOn);
-  bleMidi.setNoteOffCallback(onNoteOff);
+  Serial.println("Waiting for connections...");
+  //bleMidi.enableDebugging();  // Uncomment if you want to see some debugging output from the library
 }
 
 void loop() {
-  if (bleMidi.isConnected()) {
-    bleMidi.noteOn(0, 60, 127);
-    delay(1000);
-    bleMidi.noteOff(0, 60, 0);
-    delay(1000);
-    bleMidi.controlChange(0, 45, 53);
-    delay(1000);
-    bleMidi.programChange(0, 53);
-    delay(1000);
+  if(bleMidi.isConnected()) {             // If we've got a connection, we send an A4 during one second, at full elocity (127)
+      bleMidi.noteOn(0, 69, 127);
+      delay(1000);
+      bleMidi.noteOff(0, 69, 127);        // Then we make a delay of one second before returning to the beginning of the loop
+      delay(1000);
   }
+  delay(1);   // we feed the ESP32 watchdog when there is no connection
 }
 ```
 
