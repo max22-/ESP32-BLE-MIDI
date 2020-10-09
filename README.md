@@ -57,7 +57,7 @@ Future work
 -----------
 
 - Implement missing features (aftertouch, etc).
-- Make some examples
+- Add some more examples
 - Add documentation, with Doxygen ?
 
 - Add support for realtime messages ?
