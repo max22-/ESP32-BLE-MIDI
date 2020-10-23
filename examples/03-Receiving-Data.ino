@@ -36,8 +36,7 @@ void onNoteOff(uint8_t channel, uint8_t note, uint8_t velocity)
 
 void onControlChange(uint8_t channel, uint8_t controller, uint8_t value)
 {
-  if(controller == 125)
-    Serial.printf("Volume : %d\n", value*100/127);
+    Serial.printf("Received control change : channel %d, controller %d, value %d\n", channel, controller, value);
 }
 
 void connected()
