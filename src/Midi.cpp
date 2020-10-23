@@ -103,10 +103,10 @@ void Midi::pitchBend(uint8_t channel, float semitones)
 
 void Midi::receivePacket(uint8_t *data, uint8_t size)
 {
-    Serial.print("Received data : ");
+    debug.print("Received data : ");
     for(uint8_t i=0; i<size; i++)
-        Serial.printf("%x ", data[i]);
-    Serial.println();
+        debug.printf("%x ", data[i]);
+    debug.println();
     //check data !!!!
     uint8_t status = data[2];
     uint8_t message = status >> 4;
@@ -126,25 +126,25 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
         case 0b1000:    // Note off
             if(noteOffCallback != nullptr)
                 noteOffCallback(channel, note, velocity);
-            Serial.printf("Note off, channel %d, note %d, velocity %d\n", channel, note, velocity);
+            debug.printf("Note off, channel %d, note %d, velocity %d\n", channel, note, velocity);
             break;
 
         case 0b1001:    // Note on
             if(noteOnCallback != nullptr)
                 noteOnCallback(channel, note, velocity);
-            Serial.printf("Note on, channel %d, note %d, velocity %d\n", channel, note, velocity);
+            debug.printf("Note on, channel %d, note %d, velocity %d\n", channel, note, velocity);
             break;
 
         case 0b1010:    // Polyphonic key pressure (Aftertouch)
-            Serial.printf("Polyphonic key pressure, channel %d, note %d, velocity %d\n", channel, note, polyPressure);
+            debug.printf("Polyphonic key pressure, channel %d, note %d, velocity %d\n", channel, note, polyPressure);
             break;
 
         case 0b1011:    // Control Change
             if(controlChangeCallback != nullptr)
                 controlChangeCallback(channel, controller, controllerValue);
-            Serial.printf("Control Change, channel %d, controller %d, value %d\n", channel, controller, controllerValue);
+            debug.printf("Control Change, channel %d, controller %d, value %d\n", channel, controller, controllerValue);
             if(controller >= 120) { // Reserved controllers, for "Channel Mode Messages"
-                Serial.println("Reserved controller, not implemented yet");
+                debug.println("Reserved controller, not implemented yet");
                 switch(controller) {
                     case 120:       // All sounds off
                         break;
@@ -171,25 +171,25 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
         case 0b1100:    // Program Change
             if(programChangeCallback != nullptr)
                 programChangeCallback(channel, program);
-            Serial.printf("Program Change, channel %d, program %d\n", channel, program);
+            debug.printf("Program Change, channel %d, program %d\n", channel, program);
             break;
 
         case 0b1101:    // Channel pressure (Aftertouch)
-            Serial.printf("Channel pressure, channel %d, pressure %d\n", channel, channelPressure);
+            debug.printf("Channel pressure, channel %d, pressure %d\n", channel, channelPressure);
             break;
 
         case 0b1110:    // Pitch bend
             {   // block because we declare variables (otherwise compile error)
-            Serial.printf("Pitch bend, channel %d, lsb %d, msb %d\n", channel, lsb, msb);
+            debug.printf("Pitch bend, channel %d, lsb %d, msb %d\n", channel, lsb, msb);
             uint16_t integerPitchBend = ((msb & 127) << 7) | (lsb & 127);
-            Serial.printf("Integer value of pitch bend : %d\n", integerPitchBend);
+            debug.printf("Integer value of pitch bend : %d\n", integerPitchBend);
             float semitones = 4*(float)(integerPitchBend - 8192)/powf(2, 14);
-            Serial.printf("Pitch bend in semitones : %.2f\n", semitones);
+            debug.printf("Pitch bend in semitones : %.2f\n", semitones);
             break;
             }
 
         case 0b1111:
-            Serial.println("System common message, not implemented yet");
+            debug.println("System common message, not implemented yet");
             break;
 
         default:
