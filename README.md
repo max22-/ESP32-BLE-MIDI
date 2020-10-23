@@ -25,7 +25,7 @@ void loop() {
   if(bleMidi.isConnected()) {             // If we've got a connection, we send an A4 during one second, at full velocity (127)
       bleMidi.noteOn(0, 69, 127);
       delay(1000);
-      bleMidi.noteOff(0, 69, 127);        // Then we make a delay of one second before returning to the beginning of the loop
+      bleMidi.noteOff(0, 69, 127);        // Then we stop the note and make a delay of one second before returning to the beginning of the loop
       delay(1000);
   }
   delay(1);   // we feed the ESP32 watchdog when there is no connection
@@ -42,6 +42,11 @@ Future work
 - Add support for realtime messages ?
 - Add debugging messages in BLEMidiServer ?
 
-
-
+Thanks
+------
+Thanks to the authors of those pages / pieces of code :
+- https://github.com/neilbags/arduino-esp32-BLE-MIDI/blob/master/BLE_MIDI.ino (write midi messages)
+- https://gist.github.com/johnty/cbfa66c3369a692410f3493c20b2b3e2 (read and write)
+- https://circuitdigest.com/microcontroller-projects/esp32-ble-client-connecting-to-fitness-band-to-trigger-light (initiate the connection to another bluetooth device)
+- and the Arduino BLE_Client example sketch for ESP32 boards
 
