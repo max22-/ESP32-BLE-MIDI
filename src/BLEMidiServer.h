@@ -3,10 +3,9 @@
 
 #include "BLEMidiBase.h"
 
-class BLEMidiServer : public BLEMidi {
+class BLEMidiServerClass : public BLEMidi {
 public:
-    BLEMidiServer(const std::string deviceName);
-    void begin();
+    void begin(const std::string deviceName);
 
     void setOnConnectCallback(void (*const onConnectCallback)());
     void setOnDisconnectCallback(void (*const onDisconnectCallback)());
@@ -49,5 +48,7 @@ private:
     std::function<void(uint8_t*, uint8_t)> onWriteCallback = nullptr;
 };
 
+
+extern BLEMidiServerClass BLEMidiServer;
 
 #endif

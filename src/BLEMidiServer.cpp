@@ -1,10 +1,8 @@
 #include "BLEMidiServer.h"
 
-BLEMidiServer::BLEMidiServer(const std::string deviceName) : BLEMidi(deviceName) { }
-
-void BLEMidiServer::begin()
+void BLEMidiServerClass::begin(const std::string deviceName)
 {
-    BLEMidi::begin();
+    BLEMidi::begin(deviceName);
     BLEServer *pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks(&connected, onConnectCallback, onDisconnectCallback));
     BLEService *pService = pServer->createService(BLEUUID(MIDI_SERVICE_UUID));
@@ -23,17 +21,17 @@ void BLEMidiServer::begin()
     pAdvertising->start();
 }
 
-void BLEMidiServer::setOnConnectCallback(void (*const onConnectCallback)())
+void BLEMidiServerClass::setOnConnectCallback(void (*const onConnectCallback)())
 {
     this->onConnectCallback = onConnectCallback;
 }
 
-void BLEMidiServer::setOnDisconnectCallback(void (*const onDisconnectCallback)())
+void BLEMidiServerClass::setOnDisconnectCallback(void (*const onDisconnectCallback)())
 {
     this->onDisconnectCallback = onDisconnectCallback;
 }
 
-void BLEMidiServer::sendPacket(uint8_t *packet, uint8_t packetSize)
+void BLEMidiServerClass::sendPacket(uint8_t *packet, uint8_t packetSize)
 {
     if(!connected)
         return;
@@ -72,3 +70,5 @@ void CharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic)
         onWriteCallback((uint8_t*)rxValue.c_str(), rxValue.length());
     
 }
+
+BLEMidiServerClass BLEMidiServer;

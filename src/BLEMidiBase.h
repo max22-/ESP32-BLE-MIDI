@@ -10,12 +10,11 @@
 
 class BLEMidi : public Midi {
 public:
-    BLEMidi(const std::string deviceName);
-    virtual void begin();
+    virtual void begin(const std::string deviceName);
     bool isConnected();
 
 protected:
-    const std::string deviceName;
+    std::string deviceName;
     bool connected = false;
     const std::string MIDI_SERVICE_UUID = "03b80e5a-ede8-4b33-a751-6ce34ec4c700";
     const std::string MIDI_CHARACTERISTIC_UUID = "7772e5db-3868-4112-a1a9-f2669d106bf3";

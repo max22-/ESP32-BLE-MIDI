@@ -4,8 +4,6 @@
 void connected();
 void disconnected();
 
-BLEMidiClient bleMidi("Maxime's MIDI device");
-
 void onNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)
 {
   Serial.print("Received note on : channel ");
@@ -44,41 +42,30 @@ void disconnected()
 
 void setup() {
   Serial.begin(115200);
-  bleMidi.begin();
-  bleMidi.setOnConnectCallback(connected);
-  bleMidi.setOnDisconnectCallback(disconnected);
-  bleMidi.setNoteOnCallback(onNoteOn);
-  bleMidi.setNoteOffCallback(onNoteOff);
-  bleMidi.setControlChangeCallback(onControlChange);
-  //bleMidi.enableDebugging();
+  BLEMidiClient.begin("Maxime's MIDI device");
+  BLEMidiClient.setOnConnectCallback(connected);
+  BLEMidiClient.setOnDisconnectCallback(disconnected);
+  BLEMidiClient.setNoteOnCallback(onNoteOn);
+  BLEMidiClient.setNoteOffCallback(onNoteOff);
+  BLEMidiClient.setControlChangeCallback(onControlChange);
+  //BLEMidiClient.enableDebugging();
 }
 
 void loop() {
 
-  if(bleMidi.isConnected()) {
+  if(BLEMidiClient.isConnected()) {
     Serial.println("Sending drum on command");
-    bleMidi.controlChange(0, 122, 127);
-    bleMidi.controlChange(0, 125, 50*127/100);
+    BLEMidiClient.controlChange(0, 122, 127);
+    BLEMidiClient.controlChange(0, 125, 50*127/100);
   }
   else {
-    int nDevices = bleMidi.scan();
+    int nDevices = BLEMidiClient.scan();
     if(nDevices > 0) {
-      if(bleMidi.connect())
+      if(BLEMidiClient.connect())
         Serial.println("Connection established");
       else
         Serial.println("Connection failed");
     }
   }
   delay(1000);
-  /*if (bleMidi.isConnected()) {
-    bleMidi.noteOn(0, 60, 127);
-    delay(1000);
-    bleMidi.noteOff(0, 60, 0);
-    delay(1000);
-    bleMidi.controlChange(0, 45, 53);
-    delay(1000);
-    bleMidi.programChange(0, 53);
-    delay(1000);
-  }
-  */
 }

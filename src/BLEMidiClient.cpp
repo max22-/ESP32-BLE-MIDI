@@ -1,13 +1,11 @@
 #include "BLEMidiClient.h"
 
-BLEMidiClient::BLEMidiClient(const std::string deviceName) : BLEMidi(deviceName) {}
-
-void BLEMidiClient::begin()
+void BLEMidiClientClass::begin(const std::string deviceName)
 {
-    BLEMidi::begin();
+    BLEMidi::begin(deviceName);
 }
 
-int BLEMidiClient::scan()
+int BLEMidiClientClass::scan()
 {
     debug.println("Beginning scan...");
     pBLEScan = BLEDevice::getScan();
@@ -34,7 +32,7 @@ int BLEMidiClient::scan()
     return foundMidiDevices.size();
 }
 
-BLEAdvertisedDevice* BLEMidiClient::getScannedDevice(uint32_t deviceIndex)
+BLEAdvertisedDevice* BLEMidiClientClass::getScannedDevice(uint32_t deviceIndex)
 {
     if(deviceIndex >= foundMidiDevices.size()) {
         debug.println("Scanned device not found because requested index is greater than the devices list");
@@ -43,7 +41,7 @@ BLEAdvertisedDevice* BLEMidiClient::getScannedDevice(uint32_t deviceIndex)
     return &foundMidiDevices.at(deviceIndex);
 }
 
-bool BLEMidiClient::connect(uint32_t deviceIndex)
+bool BLEMidiClientClass::connect(uint32_t deviceIndex)
 {
     debug.printf("Connecting to device number %d\n", deviceIndex);
     if(deviceIndex >= foundMidiDevices.size()) {
@@ -72,30 +70,25 @@ bool BLEMidiClient::connect(uint32_t deviceIndex)
         return false;
     }
     debug.println("Registering characteristic callback");
-    if(pRemoteCharacteristic->canNotify())
-        CallbackRegister::registerCallback(pRemoteCharacteristic, [this](    // We have to use the CallbackRegister class to be able to call the receivePacket member function as a callback
-            BLERemoteCharacteristic* pBLERemoteCharacteristic,          // A little bit overkill... ;)
-            uint8_t* pData, 
-            size_t length, 
-            bool isNotify) {
-                receivePacket(pData, length);
-        });     
-                                                                            
-        pRemoteCharacteristic->registerForNotify(&CallbackRegister::mainCallback);
+    if(pRemoteCharacteristic->canNotify()) {                                                                        
+        pRemoteCharacteristic->registerForNotify([](BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify){
+            BLEMidiClient.receivePacket(pData, length); // We call the member function of the only instantiated class.
+        });
+    }
     connected=true;
     return true;
 }
 
-void BLEMidiClient::setOnConnectCallback(void (*const onConnectCallback)())
+void BLEMidiClientClass::setOnConnectCallback(void (*const onConnectCallback)())
 {
     this->onConnectCallback = onConnectCallback;
 }
-void BLEMidiClient::setOnDisconnectCallback(void (*const onDisconnectCallback)())
+void BLEMidiClientClass::setOnDisconnectCallback(void (*const onDisconnectCallback)())
 {
     this->onDisconnectCallback = onDisconnectCallback;
 }
 
-void BLEMidiClient::sendPacket(uint8_t *packet, uint8_t packetSize)
+void BLEMidiClientClass::sendPacket(uint8_t *packet, uint8_t packetSize)
 {
     if(!connected)
         return;
@@ -124,3 +117,5 @@ void ClientCallbacks::onDisconnect(BLEClient *pClient)
     if(onDisconnectCallback != nullptr)
         onDisconnectCallback();
 }
+
+BLEMidiClientClass BLEMidiClient;

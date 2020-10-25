@@ -1,13 +1,9 @@
 #include <Arduino.h>
 #include <BLEMidiBase.h>
 
-BLEMidi::BLEMidi(const std::string deviceName) : deviceName(deviceName)
+void BLEMidi::begin(const std::string deviceName)
 {
-
-}
-
-void BLEMidi::begin()
-{
+    this->deviceName = deviceName;
     BLEDevice::init(deviceName);
 }
 

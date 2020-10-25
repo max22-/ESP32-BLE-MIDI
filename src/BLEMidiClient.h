@@ -3,14 +3,12 @@
 
 #include <vector>
 #include "BLEMidiBase.h"
-#include "CallbackRegister.h"
 
-class BLEMidiClient : public BLEMidi {
+class BLEMidiClientClass : public BLEMidi {
 public:
-    BLEMidiClient(const std::string deviceName);
 
     /// Initializes the BLEMidiClient
-    void begin();
+    void begin(const std::string deviceName) override;
 
     /// Begins a scan, and returns the number of MIDI devices found.
     int scan();
@@ -54,5 +52,7 @@ private:
     void (* const onConnectCallback)();
     void (* const onDisconnectCallback)();
 };
+
+extern BLEMidiClientClass BLEMidiClient;
 
 #endif
