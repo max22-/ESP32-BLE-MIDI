@@ -2,23 +2,21 @@
 #include <Arduino.h>
 #include <BLEMidi.h>
 
-BLEMidiClient bleMidi("Midi client");
-
 void setup() {
     Serial.begin(115200);
     Serial.println("Initializing bluetooth");
-    bleMidi.begin();
+    BLEMidiClient.begin("Midi client"); // "Midi client" is the device's name
 
-    //bleMidi.enableDebugging();  // Uncomment to see debugging messages from the library
+    //BLEMidiClient.enableDebugging();  // Uncomment to see debugging messages from the library
 
 }
 
 void loop() {
-    if(!bleMidi.isConnected()) {
+    if(!BLEMidiClient.isConnected()) {
         // If we are not already connected, we try te connect to the first BLE Midi device we find
-        int nDevices = bleMidi.scan();
+        int nDevices = BLEMidiClient.scan();
         if(nDevices > 0) {
-            if(bleMidi.connect(0))
+            if(BLEMidiClient.connect(0))
                 Serial.println("Connection established");
             else {
                 Serial.println("Connection failed");
@@ -31,7 +29,7 @@ void loop() {
         // Real world example : it starts the drum function of the NUX Mighty Lit BT guitar amplifier
         // https://www.nuxefx.com/mighty-lite-bt.html
         // This is the only bluetooth controllable device that I have.
-        bleMidi.controlChange(0, 122, 127);
-        bleMidi.controlChange(0, 125, 50*127/100);
+        BLEMidiClient.controlChange(0, 122, 127);
+        BLEMidiClient.controlChange(0, 125, 50*127/100);
     }
 }

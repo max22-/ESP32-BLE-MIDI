@@ -12,8 +12,6 @@ and Arduino BLE_Client example sketch for ESP32 boards
 void connected();
 void disconnected();
 
-BLEMidiServer bleMidi("MIDI device");
-
 void onNoteOn(uint8_t channel, uint8_t note, uint8_t velocity)
 {
   Serial.print("Received note on : channel ");
@@ -46,22 +44,22 @@ void connected()
 
 void setup() {
   Serial.begin(115200);
-  bleMidi.begin();
-  bleMidi.setOnConnectCallback(connected);
-  bleMidi.setOnDisconnectCallback([](){     // To show how to make a callback with a lambda function
+  BLEMidiServer.begin("MIDI device");
+  BLEMidiServer.setOnConnectCallback(connected);
+  BLEMidiServer.setOnDisconnectCallback([](){     // To show how to make a callback with a lambda function
     Serial.println("Disconnected");
   });
-  bleMidi.setNoteOnCallback(onNoteOn);
-  bleMidi.setNoteOffCallback(onNoteOff);
-  bleMidi.setControlChangeCallback(onControlChange);
-  //bleMidi.enableDebugging();
+  BLEMidiServer.setNoteOnCallback(onNoteOn);
+  BLEMidiServer.setNoteOffCallback(onNoteOff);
+  BLEMidiServer.setControlChangeCallback(onControlChange);
+  //BLEMidiServer.enableDebugging();
 }
 
 void loop() {
-  if (bleMidi.isConnected()) {
-      bleMidi.noteOn(0, 69, 127);
+  if (BLEMidiServer.isConnected()) {
+      BLEMidiServer.noteOn(0, 69, 127);
       delay(1000);
-      bleMidi.noteOff(0, 69, 127);
+      BLEMidiServer.noteOff(0, 69, 127);
       delay(1000);
   }
   delay(1);
