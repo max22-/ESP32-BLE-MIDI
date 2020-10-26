@@ -1,0 +1,42 @@
+{
+    "name": "ESP32-BLE-MIDI",
+    "version": "0.1.0",
+    "description": "A library to use MIDI over Bluetooth Low Energy on ESP32 boards.",
+    "keywords": "esp32, bluetooth, ble, midi",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/max22-/ESP32-BLE-MIDI.git"
+    },
+    "authors":
+    [
+      {
+        "name": "Maxime ANDRÉ",
+        "email": "maxime.andre1986@gmail.com",
+        "url": "https://github.com/max22-/"
+      }
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/max22-/ESP32-BLE-MIDI",
+    "dependencies": {
+    },
+    "frameworks": ["arduino"],
+    "platforms": ["espressif32"],
+    "examples": [
+        {
+            "name": "01-Basic-Midi-Device",
+            "base": "examples/01-Basic-Midi-Device",
+            "files": ["01-Basic-Midi-Device.ino"]
+        },
+        {
+            "name": "02-Basic-Midi-Client",
+            "base": "examples/01-Basic-Midi-Client",
+            "files": ["02-Basic-Midi-Device.ino"]
+        },
+        {
+            "name": "03-Receiving-Data",
+            "base": "examples/03-Receiving-Data",
+            "files": ["03-Receiving-Data.ino"]
+        }
+    ]
+  }
