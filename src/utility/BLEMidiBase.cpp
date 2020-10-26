@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <BLEMidiBase.h>
+#include "BLEMidiBase.h"
 
 void BLEMidi::begin(const std::string deviceName)
 {
