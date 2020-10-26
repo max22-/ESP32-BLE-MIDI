@@ -48,3 +48,15 @@ Thanks to the authors of those pages / pieces of code :
 - https://circuitdigest.com/microcontroller-projects/esp32-ble-client-connecting-to-fitness-band-to-trigger-light (initiate the connection to another bluetooth device)
 - and the Arduino BLE_Client example sketch for ESP32 boards
 
+Message to users
+----------------
+If you make some noise with it, I would be glad to see your projects ! Don't hesitate to drop me an e-mail.
+
+
+Donations
+---------
+I work on this project for pleasure, but if you think it is worth some money, feel free to send me the amount you want, via Paypal or Bitcoin.
+
+| PayPal | Bitcoin |
+| ------ | ------- |
+| [![](https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A6ATX3NY4DFEQ) | ![Bitcoin](QR-code-bitcoin.png) 1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd |
