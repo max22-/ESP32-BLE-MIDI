@@ -59,4 +59,4 @@ I work on this project for pleasure, but if you think it is worth some money, fe
 
 | PayPal | Bitcoin |
 | ------ | ------- |
-| [![](https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A6ATX3NY4DFEQ) | ![Bitcoin](QR-code-bitcoin.png) 1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd |
+| [![](https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A6ATX3NY4DFEQ) | ![Bitcoin](QR-code-bitcoin.png =250x) 1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd |
