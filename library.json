@@ -30,8 +30,8 @@
         },
         {
             "name": "02-Basic-Midi-Client",
-            "base": "examples/01-Basic-Midi-Client",
-            "files": ["02-Basic-Midi-Device.ino"]
+            "base": "examples/02-Basic-Midi-Client",
+            "files": ["02-Basic-Midi-Client.ino"]
         },
         {
             "name": "03-Receiving-Data",
