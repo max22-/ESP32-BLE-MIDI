@@ -1,8 +1,7 @@
 ESP32-BLE-MIDI
 ==============
 
-A small Arduino library to use Midi over Bluetooth Low Energy (BLE) on ESP32 boards.
-Work in progress, there will be a release soon.
+An Arduino library to use Midi over Bluetooth Low Energy (BLE) on ESP32 boards.
 
 Quick start
 -----------
@@ -36,6 +35,7 @@ Future work
 - Implement missing features (aftertouch, etc).
 - Add some more examples
 - Add documentation, with Doxygen ?
+- Add keywords.txt for Arduino IDE
 
 - Add support for realtime messages ?
 - Add debugging messages in BLEMidiServer ?
