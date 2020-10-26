@@ -58,5 +58,5 @@ Donations
 I work on this project for pleasure, but if you think it is worth some money, feel free to send me the amount you want, via Paypal or Bitcoin.
 
 | PayPal | Bitcoin |
-| ------ | ------- |
-| [![](https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A6ATX3NY4DFEQ) |  <center> [![](http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=bitcoin%3A1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd&qzone=1&margin=0&size=200x200&ecc=L)](bitcoin:1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd)<br />[1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd](bitcoin:1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd)</center> |
+| ------ | :-----: |
+| [![](https://www.paypalobjects.com/en_US/FR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A6ATX3NY4DFEQ) | [![](http://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=bitcoin%3A1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd&qzone=1&margin=0&size=200x200&ecc=L)](bitcoin:1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd)<br />[1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd](bitcoin:1AM3HCBRrXQcQMFckB1LH1VZvxbecvVxJd) |
