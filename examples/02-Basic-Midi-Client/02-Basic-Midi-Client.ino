@@ -5,7 +5,7 @@
 void setup() {
     Serial.begin(115200);
     Serial.println("Initializing bluetooth");
-    BLEMidiClient.begin("Midi client"); // "Midi client" is the device's name
+    BLEMidiClient.begin("Midi client"); // "Midi client" is the name you want to give to the ESP32
 
     //BLEMidiClient.enableDebugging();  // Uncomment to see debugging messages from the library
 
@@ -31,5 +31,6 @@ void loop() {
         // This is the only bluetooth controllable device that I have.
         BLEMidiClient.controlChange(0, 122, 127);
         BLEMidiClient.controlChange(0, 125, 50*127/100);
+        delay(5000);
     }
 }
