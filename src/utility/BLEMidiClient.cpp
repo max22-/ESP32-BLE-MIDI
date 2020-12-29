@@ -21,7 +21,7 @@ int BLEMidiClientClass::scan()
     for(int i=0; i<foundDevices.getCount(); i++) {
         BLEAdvertisedDevice device = foundDevices.getDevice(i);
         auto deviceStr = "name = \"" + device.getName() + "\", address = "  + device.getAddress().toString();
-        if(device.getServiceUUID().equals(BLEUUID(MIDI_SERVICE_UUID))) {
+        if (device.haveServiceUUID() && device.isAdvertisingService(BLEUUID(MIDI_SERVICE_UUID))) {
             debug.println((" - BLE MIDI device : " + deviceStr).c_str());
             foundMidiDevices.push_back(device);
         }

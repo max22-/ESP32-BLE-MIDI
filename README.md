@@ -29,6 +29,12 @@ void loop() {
 }
 ```
 
+Changes
+-------
+2020-12-29
+- Integrated bug fix from [Georaura](https://github.com/georaura)
+- 
+
 Future work
 -----------
 
