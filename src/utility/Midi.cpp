@@ -10,9 +10,7 @@ https://sites.uci.edu/camp2014/2014/04/30/managing-midi-pitchbend-messages/
 
 void Midi::noteOn(uint8_t channel, uint8_t note, uint8_t velocity)
 {
-    uint8_t midiPacket[] = {
-        0x80,  // header
-        0x80,  // timestamp, not implemented 
+    uint8_t midiMessage[] = {
         (uint8_t)(0x90 | channel), // 0x90 : note on
         note,
         velocity
@@ -23,14 +21,12 @@ void Midi::noteOn(uint8_t channel, uint8_t note, uint8_t velocity)
         return;
     if(velocity > 127)
         return;
-    sendPacket(midiPacket, sizeof(midiPacket));
+    sendMessage(midiMessage, sizeof(midiMessage));
 }
 
 void Midi::noteOff(uint8_t channel, uint8_t note, uint8_t velocity)
 {
-    uint8_t midiPacket[] = {
-        0x80,  // header
-        0x80,  // timestamp, not implemented 
+    uint8_t midiMessage[] = {
         (uint8_t)(0x80 | channel), // 0x80 : note off
         note,
         velocity
@@ -41,14 +37,12 @@ void Midi::noteOff(uint8_t channel, uint8_t note, uint8_t velocity)
         return;
     if(velocity > 127)
         return;
-    sendPacket(midiPacket, sizeof(midiPacket));
+    sendMessage(midiMessage, sizeof(midiMessage));
 }
 
 void Midi::controlChange(uint8_t channel, uint8_t controller, uint8_t value)
 {
-    uint8_t midiPacket[] = {
-        0x80,  // header
-        0x80,  // timestamp, not implemented 
+    uint8_t midiMessage[] = {
         (uint8_t)(0xB0 | channel), // 0xB0 : control change
         controller,
         value
@@ -59,13 +53,11 @@ void Midi::controlChange(uint8_t channel, uint8_t controller, uint8_t value)
         return;
     if(value > 127)
         return;
-    sendPacket(midiPacket, sizeof(midiPacket));
+    sendMessage(midiMessage, sizeof(midiMessage));
 }
 void Midi::programChange(uint8_t channel, uint8_t program)
 {
-    uint8_t midiPacket[] = {
-        0x80,  // header
-        0x80,  // timestamp, not implemented 
+    uint8_t midiMessage[] = {
         (uint8_t)(0xC0 | channel), // 0xC0 : program change
         program,
     };
@@ -73,18 +65,16 @@ void Midi::programChange(uint8_t channel, uint8_t program)
         return;
     if(program > 127)
         return;
-    sendPacket(midiPacket, sizeof(midiPacket));
+    sendMessage(midiMessage, sizeof(midiMessage));
 }
 
 void Midi::pitchBend(uint8_t channel, uint8_t lsb, uint8_t msb) {
-    uint8_t midiPacket[] = {
-        0x80,  // header
-        0x80,  // timestamp, not implemented 
+    uint8_t midiMessage[] = {
         (uint8_t)(0xE0 | channel), // 0xE0 : pitch bend
         lsb,
         msb
     };
-    sendPacket(midiPacket, sizeof(midiPacket));
+    sendMessage(midiMessage, sizeof(midiMessage));
 }
 
 void Midi::pitchBend(uint8_t channel, float semitones)
@@ -196,6 +186,22 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
             break;
         
     }
+
+}
+
+void Midi::sendMessage(uint8_t *message, uint8_t messageSize)
+{
+    uint8_t packet[messageSize+2];
+
+    auto t = millis();
+    uint8_t headerByte = (1 << 7) | ((t >> 7) & ((1 << 6) - 1));
+    uint8_t timestampByte = (1 << 7) | (t & ((1 << 7) - 1));
+
+    packet[0] = headerByte;
+    packet[1] = timestampByte;
+    for(int i = 0; i < messageSize; i++)
+        packet[i+2] = message[i];
+    sendPacket(packet, messageSize + 2);
 
 }
 

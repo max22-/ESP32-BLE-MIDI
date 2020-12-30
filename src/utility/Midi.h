@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "Debug.h"
 
+
 class Midi {
 public:
     void noteOn(uint8_t channel, uint8_t note, uint8_t velocity);
@@ -28,6 +29,7 @@ protected:
     Debug debug;
 
 private:
+    void sendMessage(uint8_t *message, uint8_t messageSize);
     void (*noteOnCallback)(uint8_t, uint8_t, uint8_t) = nullptr;
     void (*noteOffCallback)(uint8_t, uint8_t, uint8_t) = nullptr;
     void (*controlChangeCallback)(uint8_t, uint8_t, uint8_t) = nullptr;

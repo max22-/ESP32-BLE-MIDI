@@ -31,9 +31,12 @@ void loop() {
 
 Changes
 -------
-2020-12-29
-- Integrated bug fix from [Georaura](https://github.com/georaura)
-- 
+
+- v0.1.1
+  - 2020-12-29
+    - Integrated bug fix from [Georaura](https://github.com/georaura)
+  - 2020-12-30
+    - Implemented packet timestamps
 
 Future work
 -----------
