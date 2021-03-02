@@ -170,8 +170,12 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
 
         case 0b1110:    // Pitch bend
             {   // block because we declare variables (otherwise compile error)
+            if(pitchBendCallback != nullptr)
+                pitchBendCallback(channel, lsb, msb);
             debug.printf("Pitch bend, channel %d, lsb %d, msb %d\n", channel, lsb, msb);
             uint16_t integerPitchBend = ((msb & 127) << 7) | (lsb & 127);
+            if(pitchBendCallback2 != nullptr)
+                pitchBendCallback2(channel, integerPitchBend);
             debug.printf("Integer value of pitch bend : %d\n", integerPitchBend);
             float semitones = 4*(float)(integerPitchBend - 8192)/powf(2, 14);
             debug.printf("Pitch bend in semitones : %.2f\n", semitones);
@@ -226,6 +230,16 @@ void Midi::setControlChangeCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
 void Midi::setProgramChangeCallback(void (*callback)(uint8_t, uint8_t))
 {
     programChangeCallback = callback;
+}
+
+void Midi::setPitchBendCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
+{
+    pitchBendCallback = callback;
+}
+
+void Midi::setPitchBendCallback(void (*callback)(uint8_t, uint16_t))
+{
+    pitchBendCallback2 = callback;
 }
 
 void Midi::enableDebugging(Stream& debugStream) {

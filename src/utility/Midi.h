@@ -19,6 +19,8 @@ public:
     void setNoteOffCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity));
     void setControlChangeCallback(void (*callback)(uint8_t channel, uint8_t controller, uint8_t value));
     void setProgramChangeCallback(void (*callback)(uint8_t channel, uint8_t program));
+    void setPitchBendCallback(void (*callback)(uint8_t channel, uint8_t lsb, uint8_t msb));
+    void setPitchBendCallback(void (*callback)(uint8_t channel, uint16_t value));
 
     void enableDebugging(Stream& debugStream = Serial);
     void disableDebugging();
@@ -34,6 +36,8 @@ private:
     void (*noteOffCallback)(uint8_t, uint8_t, uint8_t) = nullptr;
     void (*controlChangeCallback)(uint8_t, uint8_t, uint8_t) = nullptr;
     void (*programChangeCallback)(uint8_t, uint8_t) = nullptr;
+    void (*pitchBendCallback)(uint8_t, uint8_t, uint8_t) = nullptr;
+    void (*pitchBendCallback2)(uint8_t, uint16_t) = nullptr;
 };
 
 #endif

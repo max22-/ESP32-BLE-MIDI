@@ -32,6 +32,9 @@ void loop() {
 Changes
 -------
 
+- 
+  - 2021-03-02 Added pitch bend callback
+
 - v0.1.1
   - 2020-12-29
     - Integrated bug fix from [Georaura](https://github.com/georaura)
