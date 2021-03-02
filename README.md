@@ -33,7 +33,9 @@ Changes
 -------
 
 - 
-  - 2021-03-02 Added pitch bend callback
+  - 2021-03-02 
+    - Added pitch bend callback
+    - Added a range parameter for pitch bend sending
 
 - v0.1.1
   - 2020-12-29

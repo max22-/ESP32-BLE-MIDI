@@ -77,11 +77,11 @@ void Midi::pitchBend(uint8_t channel, uint8_t lsb, uint8_t msb) {
     sendMessage(midiMessage, sizeof(midiMessage));
 }
 
-void Midi::pitchBend(uint8_t channel, float semitones)
+void Midi::pitchBend(uint8_t channel, float semitones, float range)
 {
-    if(semitones < -2 || semitones > 2)
+    if(semitones < -range/2 || semitones > range/2)
         return;
-    uint16_t tmp = (semitones + 2) * ((1<<14)-1) / 4;
+    uint16_t tmp = semitones * 16384 / range + 8192;
     tmp = tmp << 1;
     byte msb = highByte(tmp);
     byte lsb = lowByte(tmp) >> 1;
