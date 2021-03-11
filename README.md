@@ -32,7 +32,7 @@ void loop() {
 Changes
 -------
 
-- 
+- v0.1.2
   - 2021-03-02 
     - Added pitch bend callback
     - Added a range parameter for pitch bend sending
