@@ -1,11 +1,3 @@
-/*
-Code based on :
-https://github.com/neilbags/arduino-esp32-BLE-MIDI/blob/master/BLE_MIDI.ino (write midi messages)
-https://gist.github.com/johnty/cbfa66c3369a692410f3493c20b2b3e2 (read and write)
-https://circuitdigest.com/microcontroller-projects/esp32-ble-client-connecting-to-fitness-band-to-trigger-light (initiate the connection to another bluetooth device)
-and Arduino BLE_Client example sketch for ESP32 boards
-*/
-
 #include <Arduino.h>
 #include <BLEMidi.h>
 
