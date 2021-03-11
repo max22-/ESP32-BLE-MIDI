@@ -36,6 +36,8 @@ Changes
   - 2021-03-02 
     - Added pitch bend callback
     - Added a range parameter for pitch bend sending
+  - 2021-03-11
+    - Added an a new overload for pitch bend sending
 
 - v0.1.1
   - 2020-12-29
@@ -53,6 +55,9 @@ Future work
 
 - Add support for realtime messages ?
 - Add debugging messages in BLEMidiServer ?
+- Check that incoming messages format is correct
+- Add support for running status messages
+- Better debug function
 
 Thanks
 ------
