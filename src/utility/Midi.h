@@ -13,6 +13,11 @@ public:
     void programChange(uint8_t channel, uint8_t program);
     void pitchBend(uint8_t channel, uint8_t lsb, uint8_t msb);
     /**
+     * @param channel Midi channel
+     * @param value Pitch bend value, from 0 to 16383
+     * */
+    void pitchBend(uint8_t channel, uint16_t value);
+    /**
      * This function is useful if you do not want to calculate lsb and msb of the pitchbend value yourself.
      * @param channel Midi channel
      * @param semitones Number of semitones, from -range to +range (pitchbend values outside of range will be ignored)
