@@ -142,7 +142,7 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
                 uint8_t velocity = ptr[1];
                 ptr += 2;
                 if(noteOffCallback != nullptr)
-                    noteOffCallback(currentTimestamp, channel, note, velocity);
+                    noteOffCallback(channel, note, velocity, currentTimestamp);
                 debug.printf("Note off, channel %d, note %d, velocity %d\n", channel, note, velocity);
                 break;
             }
@@ -152,7 +152,7 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
                 uint8_t velocity = ptr[1];
                 ptr += 2;
                 if(noteOnCallback != nullptr)
-                    noteOnCallback(currentTimestamp, channel, note, velocity);
+                    noteOnCallback(channel, note, velocity, currentTimestamp);
                 debug.printf("Note on, channel %d, note %d, velocity %d\n", channel, note, velocity);
                 break;
             }
@@ -162,7 +162,7 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
                 uint8_t pressure = ptr[1];
                 ptr += 2;
                 if(afterTouchPolyCallback != nullptr)
-                    afterTouchPolyCallback(currentTimestamp, channel, note, pressure);
+                    afterTouchPolyCallback(channel, note, pressure, currentTimestamp);
                 debug.printf("Polyphonic after touch, channel %d, note %d, pressure %d\n", channel, note, pressure);
                 break;
             }
@@ -172,7 +172,7 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
                 uint8_t value = ptr[1];
                 ptr += 2;
                 if(controlChangeCallback != nullptr)
-                    controlChangeCallback(currentTimestamp, channel, controller, value);
+                    controlChangeCallback(channel, controller, value, currentTimestamp);
                 debug.printf("Control Change, channel %d, controller %d, value %d\n", channel, controller, value);
                 
                 break;
@@ -182,7 +182,7 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
                 uint8_t program = ptr[0];
                 ptr++;
                 if(programChangeCallback != nullptr)
-                    programChangeCallback(currentTimestamp, channel, program);
+                    programChangeCallback(channel, program, currentTimestamp);
                 debug.printf("Program Change, channel %d, program %d\n", channel, program);
                 break;
             }
@@ -191,7 +191,7 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
                 uint8_t pressure = ptr[0];
                 ptr++;
                 if(afterTouchCallback != nullptr)
-                    afterTouchCallback(currentTimestamp, channel, pressure);
+                    afterTouchCallback(channel, pressure, currentTimestamp);
                 debug.printf("After touch, channel %d, pressure %d\n", channel, pressure);
                 break;
             }
@@ -201,11 +201,11 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
                 uint8_t msb = ptr[1];
                 ptr += 2;
                 if(pitchBendCallback != nullptr)
-                    pitchBendCallback(currentTimestamp, channel, lsb, msb);
+                    pitchBendCallback(channel, lsb, msb, currentTimestamp);
                 debug.printf("Pitch bend, channel %d, lsb %d, msb %d\n", channel, lsb, msb);
                 uint16_t integerPitchBend = ((msb & 127) << 7) | (lsb & 127);
                 if(pitchBendCallback2 != nullptr)
-                    pitchBendCallback2(currentTimestamp, channel, integerPitchBend);
+                    pitchBendCallback2(channel, integerPitchBend, currentTimestamp);
                 debug.printf("Integer value of pitch bend : %d\n", integerPitchBend);
                 break;
             }
@@ -243,42 +243,42 @@ void Midi::sendMessage(uint8_t *message, uint8_t messageSize)
 // ###################################
 // Callbacks
 
-void Midi::setNoteOnCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
+void Midi::setNoteOnCallback(void (*callback)(uint8_t, uint8_t, uint8_t, uint16_t))
 {
     noteOnCallback = callback;
 }
 
-void Midi::setNoteOffCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
+void Midi::setNoteOffCallback(void (*callback)(uint8_t, uint8_t, uint8_t, uint16_t))
 {
     noteOffCallback = callback;
 }
 
-void Midi::setAfterTouchPolyCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
+void Midi::setAfterTouchPolyCallback(void (*callback)(uint8_t, uint8_t, uint8_t, uint16_t))
 {
     afterTouchPolyCallback = callback;
 }
 
-void Midi::setControlChangeCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
+void Midi::setControlChangeCallback(void (*callback)(uint8_t, uint8_t, uint8_t, uint16_t))
 {
     controlChangeCallback = callback;
 }
 
-void Midi::setProgramChangeCallback(void (*callback)(uint16_t, uint8_t, uint8_t))
+void Midi::setProgramChangeCallback(void (*callback)(uint8_t, uint8_t, uint16_t))
 {
     programChangeCallback = callback;
 }
 
-void Midi::setAfterTouchCallback(void (*callback)(uint16_t, uint8_t, uint8_t))
+void Midi::setAfterTouchCallback(void (*callback)(uint8_t, uint8_t, uint16_t))
 {
     afterTouchCallback = callback;
 }
 
-void Midi::setPitchBendCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
+void Midi::setPitchBendCallback(void (*callback)(uint8_t, uint8_t, uint8_t, uint16_t))
 {
     pitchBendCallback = callback;
 }
 
-void Midi::setPitchBendCallback(void (*callback)(uint16_t, uint8_t, uint16_t))
+void Midi::setPitchBendCallback(void (*callback)(uint8_t, uint16_t, uint16_t))
 {
     pitchBendCallback2 = callback;
 }
