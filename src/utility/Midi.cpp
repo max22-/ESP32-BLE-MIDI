@@ -40,6 +40,22 @@ void Midi::noteOff(uint8_t channel, uint8_t note, uint8_t velocity)
     sendMessage(midiMessage, sizeof(midiMessage));
 }
 
+void Midi::afterTouchPoly(uint8_t channel, uint8_t note, uint8_t pressure)
+{
+        uint8_t midiMessage[] = {
+        (uint8_t)(0xA0 | channel), // 0xA0 : polyphonic after touch
+        note,
+        pressure
+    };
+    if(channel > 15)
+        return;
+    if(note > 127)
+        return;
+    if(pressure > 127)
+        return;
+    sendMessage(midiMessage, sizeof(midiMessage));
+}
+
 void Midi::controlChange(uint8_t channel, uint8_t controller, uint8_t value)
 {
     uint8_t midiMessage[] = {
@@ -64,6 +80,19 @@ void Midi::programChange(uint8_t channel, uint8_t program)
     if(channel > 15)
         return;
     if(program > 127)
+        return;
+    sendMessage(midiMessage, sizeof(midiMessage));
+}
+
+void Midi::afterTouch(uint8_t channel, uint8_t pressure)
+{
+    uint8_t midiMessage[] = {
+        (uint8_t)(0xD0 | channel), // 0xD0 : after touch
+        pressure,
+    };
+    if(channel > 15)
+        return;
+    if(pressure > 127)
         return;
     sendMessage(midiMessage, sizeof(midiMessage));
 }

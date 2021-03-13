@@ -9,8 +9,10 @@ class Midi {
 public:
     void noteOn(uint8_t channel, uint8_t note, uint8_t velocity);
     void noteOff(uint8_t channel, uint8_t note, uint8_t velocity);
+    void afterTouchPoly(uint8_t channel, uint8_t note, uint8_t pressure);
     void controlChange(uint8_t channel, uint8_t controller, uint8_t value);
     void programChange(uint8_t channel, uint8_t program);
+    void afterTouch(uint8_t channel, uint8_t pressure);
     void pitchBend(uint8_t channel, uint8_t lsb, uint8_t msb);
     /**
      * @param channel Midi channel
