@@ -42,6 +42,6 @@
           "name": "04-Dump-Messages",
           "base": "examples/04-Dump-Messages",
           "files": ["04-Dump-Messages.ino"]
-      }
+        }
     ]
   }
