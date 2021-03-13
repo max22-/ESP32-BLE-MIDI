@@ -16,5 +16,4 @@ void loop() {
       BLEMidiServer.noteOff(0, 69, 127);        // Then we make a delay of one second before returning to the beginning of the loop
       delay(1000);
   }
-  delay(1);   // we feed the ESP32 watchdog when there is no connection
 }

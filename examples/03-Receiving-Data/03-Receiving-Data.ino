@@ -43,5 +43,4 @@ void loop() {
       BLEMidiServer.noteOff(0, 69, 127);
       delay(1000);
   }
-  delay(1);
 }
