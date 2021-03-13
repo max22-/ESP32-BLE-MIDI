@@ -25,12 +25,17 @@ void loop() {
       BLEMidiServer.noteOff(0, 69, 127);        // Then we stop the note and make a delay of one second before returning to the beginning of the loop
       delay(1000);
   }
-  delay(1);   // we feed the ESP32 watchdog when there is no connection
 }
 ```
 
 Changes
 -------
+
+- v0.2.0
+  - 2021-03-12
+    - Implemented support for running status messages
+  - 2021-03-13
+    - After touch support
 
 - v0.1.2
   - 2021-03-02 
@@ -48,15 +53,12 @@ Changes
 Future work
 -----------
 
-- Implement missing features (aftertouch, etc).
 - Add some more examples
 - Add documentation, with Doxygen ?
 - Add keywords.txt for Arduino IDE
 
 - Add support for realtime messages ?
 - Add debugging messages in BLEMidiServer ?
-- Check that incoming messages format is correct
-- Add support for running status messages
 - Better debug function
 
 Thanks
