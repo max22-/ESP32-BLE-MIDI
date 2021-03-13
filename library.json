@@ -37,6 +37,11 @@
             "name": "03-Receiving-Data",
             "base": "examples/03-Receiving-Data",
             "files": ["03-Receiving-Data.ino"]
-        }
+        },
+        {
+          "name": "04-Dump-Messages",
+          "base": "examples/04-Dump-Messages",
+          "files": ["04-Dump-Messages.ino"]
+      }
     ]
   }

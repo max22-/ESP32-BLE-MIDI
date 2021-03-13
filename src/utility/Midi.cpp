@@ -102,100 +102,126 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
     for(uint8_t i=0; i<size; i++)
         debug.printf("%x ", data[i]);
     debug.println();
-    //check data !!!!
-    uint8_t status = data[2];
-    uint8_t message = status >> 4;
-    uint8_t channel = status & 0xF;
 
-    uint8_t note = data[3];
-    uint8_t velocity = data[4];
-    uint8_t polyPressure = data[4];
-    uint8_t controller = data[3];
-    uint8_t controllerValue = data[4];
-    uint8_t program = data[3];
-    uint8_t channelPressure = data[3];
-    uint8_t lsb = data[3], msb = data[4];
-
-    switch(message) {
-
-        case 0b1000:    // Note off
-            if(noteOffCallback != nullptr)
-                noteOffCallback(channel, note, velocity);
-            debug.printf("Note off, channel %d, note %d, velocity %d\n", channel, note, velocity);
-            break;
-
-        case 0b1001:    // Note on
-            if(noteOnCallback != nullptr)
-                noteOnCallback(channel, note, velocity);
-            debug.printf("Note on, channel %d, note %d, velocity %d\n", channel, note, velocity);
-            break;
-
-        case 0b1010:    // Polyphonic key pressure (Aftertouch)
-            debug.printf("Polyphonic key pressure, channel %d, note %d, velocity %d\n", channel, note, polyPressure);
-            break;
-
-        case 0b1011:    // Control Change
-            if(controlChangeCallback != nullptr)
-                controlChangeCallback(channel, controller, controllerValue);
-            debug.printf("Control Change, channel %d, controller %d, value %d\n", channel, controller, controllerValue);
-            if(controller >= 120) { // Reserved controllers, for "Channel Mode Messages"
-                debug.println("Reserved controller, not implemented yet");
-                switch(controller) {
-                    case 120:       // All sounds off
-                        break;
-                    case 121:       // Reset all controllers
-                        break;
-                    case 122:       // Local control
-                        break;
-                    case 123:       // All Notes off
-                        break;
-                    case 124:       // Omni Mode Off
-                        break;
-                    case 125:       // Omni Mode On
-                        break;
-                    case 126:       // Mono Mode on (Poly off)
-                        break;
-                    case 127:       // Poly Mode on (Mono off)
-                        break;  
-                    default:
-                        break;
-                }
-            }
-            break;
-
-        case 0b1100:    // Program Change
-            if(programChangeCallback != nullptr)
-                programChangeCallback(channel, program);
-            debug.printf("Program Change, channel %d, program %d\n", channel, program);
-            break;
-
-        case 0b1101:    // Channel pressure (Aftertouch)
-            debug.printf("Channel pressure, channel %d, pressure %d\n", channel, channelPressure);
-            break;
-
-        case 0b1110:    // Pitch bend
-            {   // block because we declare variables (otherwise compile error)
-            if(pitchBendCallback != nullptr)
-                pitchBendCallback(channel, lsb, msb);
-            debug.printf("Pitch bend, channel %d, lsb %d, msb %d\n", channel, lsb, msb);
-            uint16_t integerPitchBend = ((msb & 127) << 7) | (lsb & 127);
-            if(pitchBendCallback2 != nullptr)
-                pitchBendCallback2(channel, integerPitchBend);
-            debug.printf("Integer value of pitch bend : %d\n", integerPitchBend);
-            float semitones = 4*(float)(integerPitchBend - 8192)/powf(2, 14);
-            debug.printf("Pitch bend in semitones : %.2f\n", semitones);
-            break;
-            }
-
-        case 0b1111:
-            debug.println("System common message, not implemented yet");
-            break;
-
-        default:
-            break;
-        
+    if(size < 3) {
+        debug.println("Invalid packet (size < 3)");
+        return;
     }
 
+    if((!(data[0] & 0b10000000)) || (!(data[1] & 0b10000000))) {
+        debug.println("Invalid packet");
+        return;
+    }
+
+    currentTimestamp = ((data[0] & 0b111111) << 7);
+
+    uint8_t *ptr = &data[1];
+
+    uint8_t runningStatus = 0;
+
+    while(ptr - data < size) {
+        if(ptr[0] & 0b10000000) {
+            currentTimestamp = (currentTimestamp & 0b1111110000000) | (ptr[0] & 0b1111111);
+            ptr++;
+        }
+
+        if(ptr[0] & 0b10000000) {   // Full midi message
+            runningStatus = *ptr ;
+            ptr++;
+        }
+
+        uint8_t command = runningStatus >> 4;
+        uint8_t channel = runningStatus & 0b1111;
+
+        switch(command) {
+            case 0:
+                debug.println("Invalid packet : a running status message must be preceded by a full midi message");
+                return;
+            case 0b1000: {    // Note off
+                uint8_t note = ptr[0];
+                uint8_t velocity = ptr[1];
+                ptr += 2;
+                if(noteOffCallback != nullptr)
+                    noteOffCallback(currentTimestamp, channel, note, velocity);
+                debug.printf("Note off, channel %d, note %d, velocity %d\n", channel, note, velocity);
+                break;
+            }
+
+            case 0b1001: {   // Note on
+                uint8_t note = ptr[0];
+                uint8_t velocity = ptr[1];
+                ptr += 2;
+                if(noteOnCallback != nullptr)
+                    noteOnCallback(currentTimestamp, channel, note, velocity);
+                debug.printf("Note on, channel %d, note %d, velocity %d\n", channel, note, velocity);
+                break;
+            }
+
+            case 0b1010: {    // Polyphonic after touch
+                uint8_t note = ptr[0];
+                uint8_t pressure = ptr[1];
+                ptr += 2;
+                if(afterTouchPolyCallback != nullptr)
+                    afterTouchPolyCallback(currentTimestamp, channel, note, pressure);
+                debug.printf("Polyphonic after touch, channel %d, note %d, pressure %d\n", channel, note, pressure);
+                break;
+            }
+
+            case 0b1011: {    // Control Change
+                uint8_t controller = ptr[0];
+                uint8_t value = ptr[1];
+                ptr += 2;
+                if(controlChangeCallback != nullptr)
+                    controlChangeCallback(currentTimestamp, channel, controller, value);
+                debug.printf("Control Change, channel %d, controller %d, value %d\n", channel, controller, value);
+                
+                break;
+            }
+
+            case 0b1100: {    // Program Change
+                uint8_t program = ptr[0];
+                ptr++;
+                if(programChangeCallback != nullptr)
+                    programChangeCallback(currentTimestamp, channel, program);
+                debug.printf("Program Change, channel %d, program %d\n", channel, program);
+                break;
+            }
+
+            case 0b1101: {    // After touch
+                uint8_t pressure = ptr[0];
+                ptr++;
+                if(afterTouchCallback != nullptr)
+                    afterTouchCallback(currentTimestamp, channel, pressure);
+                debug.printf("After touch, channel %d, pressure %d\n", channel, pressure);
+                break;
+            }
+
+            case 0b1110: {    // Pitch bend
+                uint8_t lsb = ptr[0];
+                uint8_t msb = ptr[1];
+                ptr += 2;
+                if(pitchBendCallback != nullptr)
+                    pitchBendCallback(currentTimestamp, channel, lsb, msb);
+                debug.printf("Pitch bend, channel %d, lsb %d, msb %d\n", channel, lsb, msb);
+                uint16_t integerPitchBend = ((msb & 127) << 7) | (lsb & 127);
+                if(pitchBendCallback2 != nullptr)
+                    pitchBendCallback2(currentTimestamp, channel, integerPitchBend);
+                debug.printf("Integer value of pitch bend : %d\n", integerPitchBend);
+                break;
+            }
+
+            case 0b1111:
+                debug.println("System common message, not implemented yet");
+                return;
+                break;
+
+            default:
+                debug.println("Invalid packet");
+                return;
+                break;
+
+        }
+    }
 }
 
 void Midi::sendMessage(uint8_t *message, uint8_t messageSize)
@@ -217,32 +243,42 @@ void Midi::sendMessage(uint8_t *message, uint8_t messageSize)
 // ###################################
 // Callbacks
 
-void Midi::setNoteOnCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
+void Midi::setNoteOnCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
 {
     noteOnCallback = callback;
 }
 
-void Midi::setNoteOffCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
+void Midi::setNoteOffCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
 {
     noteOffCallback = callback;
 }
 
-void Midi::setControlChangeCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
+void Midi::setAfterTouchPolyCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
+{
+    afterTouchPolyCallback = callback;
+}
+
+void Midi::setControlChangeCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
 {
     controlChangeCallback = callback;
 }
 
-void Midi::setProgramChangeCallback(void (*callback)(uint8_t, uint8_t))
+void Midi::setProgramChangeCallback(void (*callback)(uint16_t, uint8_t, uint8_t))
 {
     programChangeCallback = callback;
 }
 
-void Midi::setPitchBendCallback(void (*callback)(uint8_t, uint8_t, uint8_t))
+void Midi::setAfterTouchCallback(void (*callback)(uint16_t, uint8_t, uint8_t))
+{
+    afterTouchCallback = callback;
+}
+
+void Midi::setPitchBendCallback(void (*callback)(uint16_t, uint8_t, uint8_t, uint8_t))
 {
     pitchBendCallback = callback;
 }
 
-void Midi::setPitchBendCallback(void (*callback)(uint8_t, uint16_t))
+void Midi::setPitchBendCallback(void (*callback)(uint16_t, uint8_t, uint16_t))
 {
     pitchBendCallback2 = callback;
 }
