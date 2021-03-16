@@ -31,6 +31,10 @@ void loop() {
 Changes
 -------
 
+- v0.2.1
+  - 2021-03-16
+    - Bug correction : the WDT used to reset the ESP32 when lots of messages were received, because the IDLE task didn't have time to call esp_task_wdt_reset
+
 - v0.2.0
   - 2021-03-12
     - Implemented support for running status messages
