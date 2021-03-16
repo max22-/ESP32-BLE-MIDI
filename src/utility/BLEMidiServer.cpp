@@ -68,7 +68,10 @@ void CharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic)
 
     if (rxValue.length() > 0 && onWriteCallback != nullptr)
         onWriteCallback((uint8_t*)rxValue.c_str(), rxValue.length());
-    
+
+    vTaskDelay(0);      // We leave some time for the IDLE task call esp_task_wdt_reset_watchdog
+                        // See comment from atanisoft here : https://github.com/espressif/arduino-esp32/issues/2493
+
 }
 
 BLEMidiServerClass BLEMidiServer;
