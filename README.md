@@ -31,6 +31,11 @@ void loop() {
 Changes
 -------
 
+- v0.2.2
+  - 2021-09-20
+    - Bug corrections : connection/disconnection callbacks weren't called when they where set up after BLEMidiServer.begin(),
+    and no more connection were accepted after a disconnection. Thanks to [Kim](https://github.com/buzz-dk) for the information provided.
+
 - v0.2.1
   - 2021-03-16
     - Bug correction : the WDT used to reset the ESP32 when lots of messages were received, because the IDLE task didn't have time to call esp_task_wdt_reset
