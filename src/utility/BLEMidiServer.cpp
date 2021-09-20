@@ -58,6 +58,7 @@ void MyServerCallbacks::onDisconnect(BLEServer* pServer) {
     *connected = false;
     if(onDisconnectCallback != nullptr)
         onDisconnectCallback();
+    pServer->startAdvertising();
 }
 
 CharacteristicCallback::CharacteristicCallback(std::function<void(uint8_t*, uint8_t)> onWriteCallback) : onWriteCallback(onWriteCallback) {}
