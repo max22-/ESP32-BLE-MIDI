@@ -22,8 +22,8 @@ private:
 
 class MyServerCallbacks: public BLEServerCallbacks {
 
-    void onConnect(BLEServer* pServer);
-    void onDisconnect(BLEServer* pServer);
+    void onConnect(BLEServer* pServer) override;
+    void onDisconnect(BLEServer* pServer) override;
 
 public:
     MyServerCallbacks(
@@ -33,9 +33,9 @@ public:
     );
 
 private:
-    bool *connected;
-    void (*const onConnectCallback)();
-    void (*const onDisconnectCallback)();
+    bool *connected = nullptr;
+    void (*const onConnectCallback)() = nullptr;
+    void (*const onDisconnectCallback)() = nullptr;
     BLECharacteristic *pCharacteristic;
 };
 
