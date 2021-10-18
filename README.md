@@ -28,6 +28,8 @@ void loop() {
 }
 ```
 
+Check the header file [here](https://github.com/max22-/ESP32-BLE-MIDI/blob/master/src/utility/Midi.h) to view all available MIDI commands and callbacks.
+
 Changes
 -------
 
