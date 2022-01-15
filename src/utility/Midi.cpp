@@ -292,6 +292,20 @@ void Midi::stop(void)
     sendMessage(midiMessage, sizeof(midiMessage));
 }
 
+void Midi::rec(void)
+{
+    uint8_t midiMessage[] = {
+        0xF0,	//sysex
+        0x7F, 	//
+        0x7F, 	//all devices
+        0x06, 	//MIDI Machine Control Command
+	0x06,	//stop
+	0xF7	//end of sysex
+    };
+    sendMessage(midiMessage, sizeof(midiMessage));
+}
+
+
 void Midi::sendMessage(uint8_t *message, uint8_t messageSize)
 {
     uint8_t packet[messageSize+2];

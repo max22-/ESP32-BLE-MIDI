@@ -30,6 +30,7 @@ public:
     void play(void);
     void pause(void);
     void stop(void);
+    void rec(void);
 
     void setNoteOnCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity, uint16_t timestamp));
     void setNoteOffCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity, uint16_t timestamp));
