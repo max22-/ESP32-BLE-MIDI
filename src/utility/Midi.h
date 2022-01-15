@@ -50,7 +50,14 @@ protected:
     Debug debug;
 
 private:
+    enum mmc_t {
+        MMC_STOP  = 0x01,
+        MMC_PLAY  = 0x02,
+        MMC_REC   = 0x06,
+        MMC_PAUSE = 0x09,
+    };
     void sendMessage(uint8_t *message, uint8_t messageSize);
+    void sendMMC(mmc_t command);
     void (*noteOnCallback)(uint8_t, uint8_t, uint8_t, uint16_t) = nullptr;
     void (*noteOffCallback)(uint8_t, uint8_t, uint8_t, uint16_t) = nullptr;
     void (*afterTouchPolyCallback)(uint8_t, uint8_t, uint8_t, uint16_t) = nullptr;

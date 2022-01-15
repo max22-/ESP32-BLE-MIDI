@@ -255,54 +255,48 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
 
 void Midi::play(void)
 {
-    uint8_t midiMessage[] = {
-        0xF0,	//sysex
-        0x7F, 	//
-        0x7F, 	//all devices
-        0x06, 	//MIDI Machine Control Command
-	0x02,	//play
-	0xF7	//end of sysex
-    };
-    sendMessage(midiMessage, sizeof(midiMessage));
+    sendMMC(MMC_PLAY);
 }
 
 void Midi::pause(void)
 {
-    uint8_t midiMessage[] = {
-        0xF0,	//sysex
-        0x7F, 	//
-        0x7F, 	//all devices
-        0x06, 	//MIDI Machine Control Command
-	0x09,	//pause
-	0xF7	//end of sysex
-    };
-    sendMessage(midiMessage, sizeof(midiMessage));
+    sendMMC(MMC_PAUSE);
 }
 
 void Midi::stop(void)
 {
-    uint8_t midiMessage[] = {
-        0xF0,	//sysex
-        0x7F, 	//
-        0x7F, 	//all devices
-        0x06, 	//MIDI Machine Control Command
-	0x01,	//stop
-	0xF7	//end of sysex
-    };
-    sendMessage(midiMessage, sizeof(midiMessage));
+    sendMMC(MMC_STOP);
 }
 
 void Midi::rec(void)
 {
+    sendMMC(MMC_REC);
+}
+
+void Midi::sendMMC(mmc_t command)
+{
+    switch(command) 
+    {
+        case 0x01:
+        case 0x02:
+        case 0x06:
+        case 0x09:
+            break;
+        default:
+            debug.print("Warning: Unsupported MMC command");
+            break;
+    }
+
     uint8_t midiMessage[] = {
-        0xF0,	//sysex
-        0x7F, 	//
-        0x7F, 	//all devices
-        0x06, 	//MIDI Machine Control Command
-	0x06,	//stop
-	0xF7	//end of sysex
+        0xF0,    //sysex
+        0x7F,     //
+        0x7F,     //all devices
+        0x06,     //MIDI Machine Control Command
+        command,
+        0xF7    //end of sysex
     };
     sendMessage(midiMessage, sizeof(midiMessage));
+
 }
 
 
