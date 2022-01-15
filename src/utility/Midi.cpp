@@ -253,6 +253,45 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
     }
 }
 
+void Midi::play(void)
+{
+    uint8_t midiMessage[] = {
+        0xF0,	//sysex
+        0x7F, 	//
+        0x7F, 	//all devices
+        0x06, 	//MIDI Machine Control Command
+	0x02,	//play
+	0xF7	//end of sysex
+    };
+    sendMessage(midiMessage, sizeof(midiMessage));
+}
+
+void Midi::pause(void)
+{
+    uint8_t midiMessage[] = {
+        0xF0,	//sysex
+        0x7F, 	//
+        0x7F, 	//all devices
+        0x06, 	//MIDI Machine Control Command
+	0x09,	//pause
+	0xF7	//end of sysex
+    };
+    sendMessage(midiMessage, sizeof(midiMessage));
+}
+
+void Midi::stop(void)
+{
+    uint8_t midiMessage[] = {
+        0xF0,	//sysex
+        0x7F, 	//
+        0x7F, 	//all devices
+        0x06, 	//MIDI Machine Control Command
+	0x01,	//stop
+	0xF7	//end of sysex
+    };
+    sendMessage(midiMessage, sizeof(midiMessage));
+}
+
 void Midi::sendMessage(uint8_t *message, uint8_t messageSize)
 {
     uint8_t packet[messageSize+2];

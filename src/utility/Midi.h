@@ -26,6 +26,10 @@ public:
      * @param range Range of the pitch bend in semitones (default value is 4, which is -2 to +2 semitones)
      * */
     void pitchBend(uint8_t channel, float semitones, float range = 4);
+    
+    void play(void);
+    void pause(void);
+    void stop(void);
 
     void setNoteOnCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity, uint16_t timestamp));
     void setNoteOffCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity, uint16_t timestamp));
