@@ -27,10 +27,19 @@ public:
      * */
     void pitchBend(uint8_t channel, float semitones, float range = 4);
     
-    void play(void);
-    void pause(void);
-    void stop(void);
-    void rec(void);
+    void mmcPlay(void);
+    void mmcDeferredPlay(void);
+    void mmcPause(void);
+    void mmcStop(void);
+    void mmcRecordStrobe(void);
+    void mmcRecordPause(void);
+    void mmcRecordExit(void);
+    void mmcEject(void);
+    void mmcChase(void);
+    void mmcReset(void);
+    void mmcFastForward(void);
+    void mmcRewind(void);
+    
 
     void setNoteOnCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity, uint16_t timestamp));
     void setNoteOffCallback(void (*callback)(uint8_t channel, uint8_t note, uint8_t velocity, uint16_t timestamp));
@@ -51,10 +60,19 @@ protected:
 
 private:
     enum mmc_t {
-        MMC_STOP  = 0x01,
-        MMC_PLAY  = 0x02,
-        MMC_REC   = 0x06,
-        MMC_PAUSE = 0x09,
+        MMC_STOP          = 0x01,
+        MMC_PLAY          = 0x02,
+        MMC_DEFERRED_PLAY = 0x03,
+        MMC_FAST_FORWARD  = 0x04,
+        MMC_REWIND        = 0x05,
+        MMC_RECORD_STROBE = 0x06,
+        MMC_RECORD_EXIT   = 0x07,
+        MMC_RECORD_PAUSE  = 0x08,
+        MMC_PAUSE         = 0x09,
+        MMC_EJECT         = 0x0A,
+        MMC_CHASE         = 0x0B,
+        MMC_RESET         = 0x0D,
+        //TODO: Write, Goto, Shuttle
     };
     void sendMessage(uint8_t *message, uint8_t messageSize);
     void sendMMC(mmc_t command);

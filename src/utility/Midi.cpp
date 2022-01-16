@@ -253,34 +253,83 @@ void Midi::receivePacket(uint8_t *data, uint8_t size)
     }
 }
 
-void Midi::play(void)
+void Midi::mmcPlay(void)
 {
     sendMMC(MMC_PLAY);
 }
 
-void Midi::pause(void)
+void Midi::mmcDeferredPlay(void)
+{
+    sendMMC(MMC_DEFERRED_PLAY);
+}
+
+void Midi::mmcPause(void)
 {
     sendMMC(MMC_PAUSE);
 }
 
-void Midi::stop(void)
+void Midi::mmcStop(void)
 {
     sendMMC(MMC_STOP);
 }
 
-void Midi::rec(void)
+void Midi::mmcRecordStrobe(void)
 {
-    sendMMC(MMC_REC);
+    sendMMC(MMC_RECORD_STROBE);
 }
+
+void Midi::mmcRecordExit(void)
+{
+    sendMMC(MMC_RECORD_EXIT);
+}
+
+void Midi::mmcRecordPause(void)
+{
+    sendMMC(MMC_RECORD_PAUSE);
+}
+
+void Midi::mmcEject(void)
+{
+    sendMMC(MMC_EJECT);
+}
+
+void Midi::mmcChase(void)
+{
+    sendMMC(MMC_CHASE);
+}
+
+void Midi::mmcReset(void)
+{
+    sendMMC(MMC_RESET);
+}
+
+void Midi::mmcFastForward(void)
+{
+    sendMMC(MMC_FAST_FORWARD);
+}
+
+void Midi::mmcRewind(void)
+{
+    sendMMC(MMC_REWIND);
+}
+
 
 void Midi::sendMMC(mmc_t command)
 {
     switch(command) 
     {
-        case 0x01:
-        case 0x02:
-        case 0x06:
-        case 0x09:
+        case MMC_STOP:
+        case MMC_PLAY:
+        case MMC_DEFERRED_PLAY:
+        case MMC_FAST_FORWARD:
+        case MMC_REWIND:
+        case MMC_RECORD_STROBE:
+        case MMC_RECORD_EXIT:
+        case MMC_RECORD_PAUSE:
+        case MMC_PAUSE:
+        case MMC_EJECT:
+        case MMC_CHASE:
+        case MMC_RESET:
             break;
         default:
             debug.print("Warning: Unsupported MMC command");
