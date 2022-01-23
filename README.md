@@ -34,7 +34,7 @@ Changes
 -------
 
   - 2022-01-23
-    - Merge PR from [trdenton](https://github.com/trdenton) : Support for [MMC transport controls](https://en.wikipedia.org/wiki/MIDI_Machine_Control)
+    - Merged PR from [trdenton](https://github.com/trdenton) : Support for [MMC transport controls](https://en.wikipedia.org/wiki/MIDI_Machine_Control)
 
 - v0.2.2
   - 2021-09-20
