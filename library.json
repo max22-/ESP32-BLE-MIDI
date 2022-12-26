@@ -19,6 +19,7 @@
     "license": "MIT",
     "homepage": "https://github.com/max22-/ESP32-BLE-MIDI",
     "dependencies": {
+        "nkolban/ESP32 BLE Arduino": "^1.0.1"
     },
     "frameworks": ["arduino"],
     "platforms": ["espressif32"],
