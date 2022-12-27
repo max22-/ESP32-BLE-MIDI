@@ -1,6 +1,6 @@
 {
     "name": "ESP32-BLE-MIDI",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "description": "A library to use MIDI over Bluetooth Low Energy on ESP32 boards.",
     "keywords": "esp32, bluetooth, ble, midi",
     "repository":
@@ -19,6 +19,7 @@
     "license": "MIT",
     "homepage": "https://github.com/max22-/ESP32-BLE-MIDI",
     "dependencies": {
+      "h2zero/NimBLE-Arduino": "^1.4.1"
     },
     "frameworks": ["arduino"],
     "platforms": ["espressif32"],

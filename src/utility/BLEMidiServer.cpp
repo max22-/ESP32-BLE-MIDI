@@ -8,12 +8,11 @@ void BLEMidiServerClass::begin(const std::string deviceName)
     BLEService *pService = pServer->createService(BLEUUID(MIDI_SERVICE_UUID));
     pCharacteristic = pService->createCharacteristic(
         BLEUUID(MIDI_CHARACTERISTIC_UUID),
-        BLECharacteristic::PROPERTY_READ   |
-        BLECharacteristic::PROPERTY_WRITE  |
-        BLECharacteristic::PROPERTY_NOTIFY |
-        BLECharacteristic::PROPERTY_WRITE_NR
+        NIMBLE_PROPERTY::READ   |
+        NIMBLE_PROPERTY::WRITE  |
+        NIMBLE_PROPERTY::NOTIFY |
+        NIMBLE_PROPERTY::WRITE_NR
     );
-    pCharacteristic->addDescriptor(new BLE2902());
     pCharacteristic->setCallbacks(new CharacteristicCallback([this](uint8_t *data, uint8_t size) { this->receivePacket(data, size); }));
     pService->start();
     BLEAdvertising *pAdvertising = pServer->getAdvertising();

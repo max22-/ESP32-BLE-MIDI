@@ -70,8 +70,8 @@ bool BLEMidiClientClass::connect(uint32_t deviceIndex)
         return false;
     }
     debug.println("Registering characteristic callback");
-    if(pRemoteCharacteristic->canNotify()) {                                                                        
-        pRemoteCharacteristic->registerForNotify([](BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify){
+    if(pRemoteCharacteristic->canNotify()) {
+        pRemoteCharacteristic->subscribe(true, [](BLERemoteCharacteristic* pBLERemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify){
             BLEMidiClient.receivePacket(pData, length); // We call the member function of the only instantiated class.
             vTaskDelay(0);      // We leave some time for the IDLE task call esp_task_wdt_reset_watchdog
                                 // See comment from atanisoft here : https://github.com/espressif/arduino-esp32/issues/2493
@@ -94,7 +94,7 @@ void BLEMidiClientClass::sendPacket(uint8_t *packet, uint8_t packetSize)
 {
     if(!connected)
         return;
-    pRemoteCharacteristic->writeValue(packet, packetSize);
+    pRemoteCharacteristic->writeValue(packet, packetSize, false);
 }
 
 ClientCallbacks::ClientCallbacks(

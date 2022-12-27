@@ -1,10 +1,7 @@
 #ifndef BLE_MIDI_BASE_H
 #define BLE_MIDI_BASE_H
 
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
-#include <BLE2902.h>
+#include <NimBLEDevice.h>
 #include <functional>
 #include "Midi.h"
 
