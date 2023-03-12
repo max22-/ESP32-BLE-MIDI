@@ -33,6 +33,10 @@ Check the header file [here](https://github.com/max22-/ESP32-BLE-MIDI/blob/maste
 Changes
 -------
 
+  - v0.3.1
+    - 2023-03-12
+      - Added a simple knob example
+
   - v0.3.0
     - 2022-12-27
       - Migrated to NimBLE using [NimBLE-Arduino library](https://github.com/h2zero/NimBLE-Arduino)
