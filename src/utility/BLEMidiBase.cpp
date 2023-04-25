@@ -7,6 +7,10 @@ void BLEMidi::begin(const std::string deviceName)
     BLEDevice::init(deviceName);
 }
 
+void BLEMidi::end() {
+    BLEDevice::deinit();
+}
+
 bool BLEMidi::isConnected()
 {
     return connected;

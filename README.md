@@ -33,6 +33,10 @@ Check the header file [here](https://github.com/max22-/ESP32-BLE-MIDI/blob/maste
 Changes
 -------
 
+  - v0.3.2
+    - 2023-04-25
+      - Added BLEMidi::end() to stop the BLE client or server.
+      
   - v0.3.1
     - 2023-03-12
       - Added a simple knob example

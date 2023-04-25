@@ -8,6 +8,7 @@
 class BLEMidi : public Midi {
 public:
     virtual void begin(const std::string deviceName);
+    void end();
     bool isConnected();
 
 protected:
