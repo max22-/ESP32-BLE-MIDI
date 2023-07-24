@@ -1,8 +1,8 @@
 ESP32-BLE-MIDI
 ==============
 
-An Arduino library to use Midi over Bluetooth Low Energy (BLE) on ESP32 boards. If you find it useful you can 
-<a href='https://ko-fi.com/C0C7NIYDY' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a> if you want.
+An Arduino library to use Midi over Bluetooth Low Energy (BLE) on ESP32 boards.  
+If you find it useful you can <a href='https://ko-fi.com/C0C7NIYDY' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a> if you want.
 
 Quick start
 -----------
