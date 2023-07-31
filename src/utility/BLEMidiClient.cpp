@@ -26,7 +26,7 @@ int BLEMidiClientClass::scan()
             foundMidiDevices.push_back(device);
         }
         else
-            debug.printf((" - Other type of BLE device : " + deviceStr).c_str());
+            debug.println((" - Other type of BLE device : " + deviceStr).c_str());
         debug.printf("Total of BLE MIDI devices : %d\n", foundMidiDevices.size());
     }
     return foundMidiDevices.size();
