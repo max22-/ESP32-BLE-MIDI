@@ -1,19 +1,25 @@
 #include "BLEMidiClient.h"
+#include "AdvertisedDeviceCallbacks.h"
 
 void BLEMidiClientClass::begin(const std::string deviceName)
 {
     BLEMidi::begin(deviceName);
-    xTaskCreate(connect_task, "connect", 2048, this, tskIDLE_PRIORITY, nullptr);
-
 }
 
-void BLEMidiClientClass::connect_task(void* vParams) {
-    BLEMidiClientClass* midi = (BLEMidiClientClass*)vParams;
+/// @param vParams 
+void BLEMidiClientClass::connect_task(void *vParams)
+{
+    BLEMidiClientClass *midi = (BLEMidiClientClass *)vParams;
 
-    for (;;) {
-    if (!midi->connected && midi->advertisedDeviceCallbacks && midi->advertisedDeviceCallbacks->getDevice()){
-        midi->connect(midi->advertisedDeviceCallbacks->getDevice() );
-    }
+    for (;;)
+    {
+        if (!midi->connected && midi->advertisedDeviceCallbacks && midi->advertisedDeviceCallbacks->getDevice())
+        {
+            midi->connect(midi->advertisedDeviceCallbacks->getDevice());
+            delete midi->advertisedDeviceCallbacks;
+            midi->advertisedDeviceCallbacks = nullptr;
+            vTaskDelete(NULL);
+        }
     }
 }
 
@@ -21,7 +27,7 @@ int BLEMidiClientClass::scan()
 {
     debug.println("Beginning scan...");
     pBLEScan = BLEDevice::getScan();
-    if(pBLEScan == nullptr)
+    if (pBLEScan == nullptr)
         return 0;
     pBLEScan->setActiveScan(true);
     pBLEScan->setInterval(100);
@@ -30,10 +36,12 @@ int BLEMidiClientClass::scan()
     foundMidiDevices.clear();
     BLEScanResults foundDevices = pBLEScan->start(3);
     debug.printf("Found %d BLE device(s)\n", foundDevices.getCount());
-    for(int i=0; i<foundDevices.getCount(); i++) {
+    for (int i = 0; i < foundDevices.getCount(); i++)
+    {
         BLEAdvertisedDevice device = foundDevices.getDevice(i);
-        auto deviceStr = "name = \"" + device.getName() + "\", address = "  + device.getAddress().toString();
-        if (device.haveServiceUUID() && device.isAdvertisingService(BLEUUID(MIDI_SERVICE_UUID))) {
+        auto deviceStr = "name = \"" + device.getName() + "\", address = " + device.getAddress().toString();
+        if (device.haveServiceUUID() && device.isAdvertisingService(BLEUUID(MIDI_SERVICE_UUID)))
+        {
             debug.println((" - BLE MIDI device : " + deviceStr).c_str());
             foundMidiDevices.push_back(device);
         }
@@ -44,15 +52,21 @@ int BLEMidiClientClass::scan()
     return foundMidiDevices.size();
 }
 
-BLEAdvertisedDevice *BLEMidiClientClass::backgroundScan(std::string const& name = "", std::string const& address = "")
+BLEAdvertisedDevice *BLEMidiClientClass::backgroundScan(std::string const &name, std::string const &address)
 {
-    if (!advertisedDeviceCallbacks) advertisedDeviceCallbacks = new AdvertisedDeviceCallbacks(this);
-    advertisedDeviceCallbacks->setName(name);
-    advertisedDeviceCallbacks->setAddress(address);
+    if (advertisedDeviceCallbacks)
+    {
+        delete (advertisedDeviceCallbacks);
+        advertisedDeviceCallbacks = nullptr;
+    }
+    if (!advertisedDeviceCallbacks)
+        advertisedDeviceCallbacks = new AdvertisedDeviceCallbacks(name, address, this);
     if (BLEDevice::getScan()->isScanning())
         return NULL;
     if (advertisedDeviceCallbacks->getDevice())
         return advertisedDeviceCallbacks->getDevice();
+
+    xTaskCreate(connect_task, "connect", 2048, this, tskIDLE_PRIORITY, nullptr);
 
     BLEScan *pScan = BLEDevice::getScan();
     pScan->setAdvertisedDeviceCallbacks(advertisedDeviceCallbacks);
@@ -63,9 +77,10 @@ BLEAdvertisedDevice *BLEMidiClientClass::backgroundScan(std::string const& name 
     return NULL;
 }
 
-BLEAdvertisedDevice* BLEMidiClientClass::getScannedDevice(uint32_t deviceIndex)
+BLEAdvertisedDevice *BLEMidiClientClass::getScannedDevice(uint32_t deviceIndex)
 {
-    if(deviceIndex >= foundMidiDevices.size()) {
+    if (deviceIndex >= foundMidiDevices.size())
+    {
         debug.println("Scanned device not found because requested index is greater than the devices list");
         return nullptr;
     }
@@ -187,56 +202,32 @@ void BLEMidiClientClass::setOnDisconnectCallback(void (*const onDisconnectCallba
 
 void BLEMidiClientClass::sendPacket(uint8_t *packet, uint8_t packetSize)
 {
-    if(!connected)
+    if (!connected)
         return;
     pRemoteCharacteristic->writeValue(packet, packetSize, false);
 }
 
 ClientCallbacks::ClientCallbacks(
-    bool& connected,
-    void (*onConnectCallback)(), 
-    void (*onDisconnectCallback)()
-) :     connected(connected),
-        onConnectCallback(onConnectCallback),
-        onDisconnectCallback(onDisconnectCallback)
-{}
+    bool &connected,
+    void (*onConnectCallback)(),
+    void (*onDisconnectCallback)()) : connected(connected),
+                                      onConnectCallback(onConnectCallback),
+                                      onDisconnectCallback(onDisconnectCallback)
+{
+}
 
 void ClientCallbacks::onConnect(BLEClient *pClient)
 {
     connected = true;
-    if(onConnectCallback != nullptr)
+    if (onConnectCallback != nullptr)
         onConnectCallback();
 }
 
 void ClientCallbacks::onDisconnect(BLEClient *pClient)
 {
     connected = false;
-    if(onDisconnectCallback != nullptr)
+    if (onDisconnectCallback != nullptr)
         onDisconnectCallback();
 }
 
 BLEMidiClientClass BLEMidiClient;
-
-void AdvertisedDeviceCallbacks::onResult(BLEAdvertisedDevice *advertisedDevice)
-{
-    p_midiClient->debug.print("BLE Device found: ");
-    if (advertisedDevice->haveServiceUUID() && advertisedDevice->isAdvertisingService(BLEUUID(BLEMidiClientClass::MIDI_SERVICE_UUID)))
-    {
-        p_midiClient->debug.println("is MIDI device...");
-        advertisedDevice->getScan()->stop();
-        auto deviceStr = "name = \"" + advertisedDevice->getName() + "\", address = " + advertisedDevice->getAddress().toString();
-        p_midiClient->debug.println(deviceStr.c_str());
-
-        //** drop out and continue the search if it is not the midi device we were searching for **//
-        if (!m_name.empty() && m_name.compare(advertisedDevice->getName())!=0) return;
-        if (!m_address.empty() && m_address.compare(advertisedDevice->getAddress().toString())!=0) return;
-
-        p_midiClient->debug.println("Is our device. Trying to connect...");
-        /** stop scan before connecting */
-        advertisedDevice->getScan()->stop();
-        /** Save the device reference in a global for the client to use*/
-        foundDevice = advertisedDevice;
-        //p_midiClient->connect(advertisedDevice); //Cannot connect in the callback.
-
-    }
-};
