@@ -15,8 +15,7 @@ public:
     /// Begins a scan, and returns the number of MIDI devices found.
     int scan();
 
-    /// Begins a scan and returns immediatelly. Connects to any device that has both the name and address
-    /// passed to the search.
+    /// Begins a scan and returns immediatelly. Connects to any device that has both the name and address passed to the search.
     /// If either is empty, it counts as a wildcard.
     /// If both are empty, it connects to the first midi device found  
     BLEAdvertisedDevice* backgroundScan(std::string const& name = "", std::string const& address = "");
