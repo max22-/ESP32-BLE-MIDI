@@ -70,10 +70,10 @@ BLEAdvertisedDevice *BLEMidiClientClass::backgroundScan(std::string const &name,
 
     BLEScan *pScan = BLEDevice::getScan();
     pScan->setAdvertisedDeviceCallbacks(advertisedDeviceCallbacks);
-    pScan->setInterval(45);
-    pScan->setWindow(15);
+    pScan->setInterval(0x50);
+    pScan->setWindow(0x30);
     pScan->setActiveScan(true);
-    pScan->start(0, false);
+    pScan->start(0, nullptr, false);
     return NULL;
 }
 
