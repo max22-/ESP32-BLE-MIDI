@@ -45,7 +45,7 @@ bool BLEMidiClientClass::connect(uint32_t deviceIndex)
 {
     debug.printf("Connecting to device number %d\n", deviceIndex);
     if(deviceIndex >= foundMidiDevices.size()) {
-        debug.println("Cannot connect : device index is greater than the size of the MIDI devices lists.");
+        debug.println("Cannot connect : device index is greater than the size of the MIDI devices list.");
         return false;
     }
     NimBLEAdvertisedDevice* device = new NimBLEAdvertisedDevice(foundMidiDevices.at(deviceIndex));
