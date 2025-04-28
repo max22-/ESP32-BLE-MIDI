@@ -15,7 +15,7 @@ public:
 
     /// Returns the nth scanned MIDI device, or nullptr in case of an error. 
     /// Do not use the returned value if you perform another scan later, because it will be cleared.
-    BLEAdvertisedDevice* getScannedDevice(uint32_t deviceIndex);
+    NimBLEAdvertisedDevice* getScannedDevice(uint32_t deviceIndex);
 
     /// Connects to the nth scanned MIDI device
     bool connect(uint32_t deviceIndex = 0);
@@ -28,16 +28,16 @@ private:
     /// This method is called by the base Midi class to send packets.
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
 
-    BLEScan *pBLEScan = nullptr;
-    std::vector<BLEAdvertisedDevice> foundMidiDevices;
-    BLERemoteCharacteristic* pRemoteCharacteristic;
+    NimBLEScan *pBLEScan = nullptr;
+    std::vector<NimBLEAdvertisedDevice> foundMidiDevices;
+    NimBLERemoteCharacteristic* pRemoteCharacteristic;
     void (*onConnectCallback)() = nullptr;
     void (*onDisconnectCallback)() = nullptr;
 
 };
 
 /// Callbacks for connections and disconnections
-class ClientCallbacks : public BLEClientCallbacks {
+class ClientCallbacks : public NimBLEClientCallbacks {
 public:
     ClientCallbacks(
             bool& connected,
@@ -45,8 +45,8 @@ public:
             void (* const onDisconnectCallback)() = nullptr
     );
 private:
-    void onConnect(BLEClient*);
-    void onDisconnect(BLEClient*);
+    void onConnect(NimBLEClient*);
+    void onDisconnect(NimBLEClient*);
 
     bool& connected;
     void (* const onConnectCallback)();

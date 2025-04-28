@@ -3,11 +3,11 @@
 void BLEMidiServerClass::begin(const std::string deviceName)
 {
     BLEMidi::begin(deviceName);
-    BLEServer *pServer = BLEDevice::createServer();
+    NimBLEServer *pServer = NimBLEDevice::createServer();
     pServer->setCallbacks(this);
-    BLEService *pService = pServer->createService(BLEUUID(MIDI_SERVICE_UUID));
+    NimBLEService *pService = pServer->createService(NimBLEUUID(MIDI_SERVICE_UUID));
     pCharacteristic = pService->createCharacteristic(
-        BLEUUID(MIDI_CHARACTERISTIC_UUID),
+        NimBLEUUID(MIDI_CHARACTERISTIC_UUID),
         NIMBLE_PROPERTY::READ   |
         NIMBLE_PROPERTY::WRITE  |
         NIMBLE_PROPERTY::NOTIFY |
@@ -15,7 +15,7 @@ void BLEMidiServerClass::begin(const std::string deviceName)
     );
     pCharacteristic->setCallbacks(new CharacteristicCallback([this](uint8_t *data, uint8_t size) { this->receivePacket(data, size); }));
     pService->start();
-    BLEAdvertising *pAdvertising = pServer->getAdvertising();
+    NimBLEAdvertising *pAdvertising = pServer->getAdvertising();
     pAdvertising->addServiceUUID(pService->getUUID());
     pAdvertising->start();
 }
@@ -38,14 +38,14 @@ void BLEMidiServerClass::sendPacket(uint8_t *packet, uint8_t packetSize)
     pCharacteristic->notify();
 }
 
-void BLEMidiServerClass::onConnect(BLEServer* pServer)
+void BLEMidiServerClass::onConnect(NimBLEServer* pServer)
 {
     connected = true;
     if(onConnectCallback != nullptr)
         onConnectCallback();
 }
 
-void BLEMidiServerClass::onDisconnect(BLEServer* pServer)
+void BLEMidiServerClass::onDisconnect(NimBLEServer* pServer)
 {
     connected = false;
     if(onDisconnectCallback != nullptr)
@@ -55,7 +55,7 @@ void BLEMidiServerClass::onDisconnect(BLEServer* pServer)
 
 CharacteristicCallback::CharacteristicCallback(std::function<void(uint8_t*, uint8_t)> onWriteCallback) : onWriteCallback(onWriteCallback) {}
 
-void CharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic)
+void CharacteristicCallback::onWrite(NimBLECharacteristic *pCharacteristic)
 {
     std::string rxValue = pCharacteristic->getValue();
 

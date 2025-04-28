@@ -4,7 +4,7 @@
 #include "BLEMidiBase.h"
 
 
-class BLEMidiServerClass : public BLEMidi, public BLEServerCallbacks {
+class BLEMidiServerClass : public BLEMidi, public NimBLEServerCallbacks {
 public:
     void begin(const std::string deviceName);
 
@@ -15,20 +15,20 @@ public:
 
 private:
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
-    void onConnect(BLEServer* pServer) override;
-    void onDisconnect(BLEServer* pServer) override;
+    void onConnect(NimBLEServer* pServer) override;
+    void onDisconnect(NimBLEServer* pServer) override;
     
     void (*onConnectCallback)() = nullptr;
     void (*onDisconnectCallback)() = nullptr;
-    BLECharacteristic* pCharacteristic = nullptr;
+    NimBLECharacteristic* pCharacteristic = nullptr;
 };
 
 
-class CharacteristicCallback: public BLECharacteristicCallbacks {
+class CharacteristicCallback: public NimBLECharacteristicCallbacks {
 public:
     CharacteristicCallback(std::function<void(uint8_t*, uint8_t)> onWriteCallback);
 private:
-    void onWrite(BLECharacteristic *pCharacteristic);
+    void onWrite(NimBLECharacteristic *pCharacteristic);
     std::function<void(uint8_t*, uint8_t)> onWriteCallback = nullptr;
 };
 
