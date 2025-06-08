@@ -15,8 +15,8 @@ public:
 
 private:
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
-    void onConnect(BLEServer* pServer) override;
-    void onDisconnect(BLEServer* pServer) override;
+    void onConnect(BLEServer* pServer, NimBLEConnInfo& connInfo) override;
+    void onDisconnect(BLEServer* pServer, NimBLEConnInfo& connInfo, int reason) override;
     
     void (*onConnectCallback)() = nullptr;
     void (*onDisconnectCallback)() = nullptr;

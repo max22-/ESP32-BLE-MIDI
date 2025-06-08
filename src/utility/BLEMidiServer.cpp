@@ -16,6 +16,9 @@ void BLEMidiServerClass::begin(const std::string deviceName)
     pCharacteristic->setCallbacks(new CharacteristicCallback([this](uint8_t *data, uint8_t size) { this->receivePacket(data, size); }));
     pService->start();
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
+    auto data = pAdvertising->getAdvertisementData();
+    data.setName(deviceName);
+    pAdvertising->setAdvertisementData(data);
     pAdvertising->addServiceUUID(pService->getUUID());
     pAdvertising->start();
 }
@@ -38,14 +41,14 @@ void BLEMidiServerClass::sendPacket(uint8_t *packet, uint8_t packetSize)
     pCharacteristic->notify();
 }
 
-void BLEMidiServerClass::onConnect(BLEServer* pServer)
+void BLEMidiServerClass::onConnect(BLEServer* pServer, NimBLEConnInfo& connInfo)
 {
     connected = true;
     if(onConnectCallback != nullptr)
         onConnectCallback();
 }
 
-void BLEMidiServerClass::onDisconnect(BLEServer* pServer)
+void BLEMidiServerClass::onDisconnect(BLEServer* pServer, NimBLEConnInfo& connInfo, int reason)
 {
     connected = false;
     if(onDisconnectCallback != nullptr)

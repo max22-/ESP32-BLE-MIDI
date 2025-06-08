@@ -16,10 +16,11 @@ int BLEMidiClientClass::scan()
     pBLEScan->setWindow(99);
     pBLEScan->clearResults();
     foundMidiDevices.clear();
-    BLEScanResults foundDevices = pBLEScan->start(3);
+    pBLEScan->start(3);
+    BLEScanResults foundDevices = pBLEScan->getResults();
     debug.printf("Found %d BLE device(s)\n", foundDevices.getCount());
     for(int i=0; i<foundDevices.getCount(); i++) {
-        BLEAdvertisedDevice device = foundDevices.getDevice(i);
+        BLEAdvertisedDevice device = *foundDevices.getDevice(i);
         auto deviceStr = "name = \"" + device.getName() + "\", address = "  + device.getAddress().toString();
         if (device.haveServiceUUID() && device.isAdvertisingService(BLEUUID(MIDI_SERVICE_UUID))) {
             debug.println((" - BLE MIDI device : " + deviceStr).c_str());
