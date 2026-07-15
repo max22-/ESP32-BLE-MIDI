@@ -15,7 +15,7 @@ public:
 
     /// Returns the nth scanned MIDI device, or nullptr in case of an error. 
     /// Do not use the returned value if you perform another scan later, because it will be cleared.
-    NimBLEAdvertisedDevice* getScannedDevice(uint32_t deviceIndex);
+    const NimBLEAdvertisedDevice* getScannedDevice(uint32_t deviceIndex);
 
     /// Connects to the nth scanned MIDI device
     bool connect(uint32_t deviceIndex = 0);
@@ -29,7 +29,7 @@ private:
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
 
     NimBLEScan *pBLEScan = nullptr;
-    std::vector<NimBLEAdvertisedDevice> foundMidiDevices;
+    std::vector<const NimBLEAdvertisedDevice*> foundMidiDevices;
     NimBLERemoteCharacteristic* pRemoteCharacteristic;
     void (*onConnectCallback)() = nullptr;
     void (*onDisconnectCallback)() = nullptr;

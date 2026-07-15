@@ -38,14 +38,14 @@ void BLEMidiServerClass::sendPacket(uint8_t *packet, uint8_t packetSize)
     pCharacteristic->notify();
 }
 
-void BLEMidiServerClass::onConnect(NimBLEServer* pServer)
+void BLEMidiServerClass::onConnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo)
 {
     connected = true;
     if(onConnectCallback != nullptr)
         onConnectCallback();
 }
 
-void BLEMidiServerClass::onDisconnect(NimBLEServer* pServer)
+void BLEMidiServerClass::onDisconnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo, int reason)
 {
     connected = false;
     if(onDisconnectCallback != nullptr)

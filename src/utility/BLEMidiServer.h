@@ -15,8 +15,8 @@ public:
 
 private:
     virtual void sendPacket(uint8_t *packet, uint8_t packetSize) override;
-    void onConnect(NimBLEServer* pServer) override;
-    void onDisconnect(NimBLEServer* pServer) override;
+    void onConnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo) override;
+    void onDisconnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo, int reason) override;
     
     void (*onConnectCallback)() = nullptr;
     void (*onDisconnectCallback)() = nullptr;

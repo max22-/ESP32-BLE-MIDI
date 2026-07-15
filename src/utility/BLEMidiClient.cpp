@@ -16,12 +16,12 @@ int BLEMidiClientClass::scan()
     pBLEScan->setWindow(99);
     pBLEScan->clearResults();
     foundMidiDevices.clear();
-    NimBLEScanResults foundDevices = pBLEScan->start(3);
+    NimBLEScanResults foundDevices = pBLEScan->getResults(3000, false);
     debug.printf("Found %d BLE device(s)\n", foundDevices.getCount());
     for(int i=0; i<foundDevices.getCount(); i++) {
-        NimBLEAdvertisedDevice device = foundDevices.getDevice(i);
-        auto deviceStr = "name = \"" + device.getName() + "\", address = "  + device.getAddress().toString();
-        if (device.haveServiceUUID() && device.isAdvertisingService(BLEUUID(MIDI_SERVICE_UUID))) {
+        const NimBLEAdvertisedDevice *device = foundDevices.getDevice(i);
+        auto deviceStr = "name = \"" + device->getName() + "\", address = "  + device->getAddress().toString();
+        if (device->haveServiceUUID() && device->isAdvertisingService(BLEUUID(MIDI_SERVICE_UUID))) {
             debug.println((" - BLE MIDI device : " + deviceStr).c_str());
             foundMidiDevices.push_back(device);
         }
@@ -32,13 +32,13 @@ int BLEMidiClientClass::scan()
     return foundMidiDevices.size();
 }
 
-NimBLEAdvertisedDevice* BLEMidiClientClass::getScannedDevice(uint32_t deviceIndex)
+const NimBLEAdvertisedDevice* BLEMidiClientClass::getScannedDevice(uint32_t deviceIndex)
 {
     if(deviceIndex >= foundMidiDevices.size()) {
         debug.println("Scanned device not found because requested index is greater than the devices list");
         return nullptr;
     }
-    return &foundMidiDevices.at(deviceIndex);
+    return foundMidiDevices.at(deviceIndex);
 }
 
 bool BLEMidiClientClass::connect(uint32_t deviceIndex)
@@ -48,7 +48,7 @@ bool BLEMidiClientClass::connect(uint32_t deviceIndex)
         debug.println("Cannot connect : device index is greater than the size of the MIDI devices list.");
         return false;
     }
-    NimBLEAdvertisedDevice* device = new NimBLEAdvertisedDevice(foundMidiDevices.at(deviceIndex));
+    const NimBLEAdvertisedDevice* device = foundMidiDevices.at(deviceIndex);
     if(device == nullptr)
         return false;
     debug.printf("Address of the device : %s\n", device->getAddress().toString().c_str());
