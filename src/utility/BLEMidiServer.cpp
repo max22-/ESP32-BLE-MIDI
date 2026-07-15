@@ -14,7 +14,6 @@ void BLEMidiServerClass::begin(const std::string deviceName)
         NIMBLE_PROPERTY::WRITE_NR
     );
     pCharacteristic->setCallbacks(new CharacteristicCallback([this](uint8_t *data, uint8_t size) { this->receivePacket(data, size); }));
-    pService->start();
     NimBLEAdvertising *pAdvertising = pServer->getAdvertising();
     pAdvertising->addServiceUUID(pService->getUUID());
     pAdvertising->start();
