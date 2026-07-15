@@ -5,7 +5,7 @@ void BLEMidiClientClass::begin(const std::string deviceName)
     BLEMidi::begin(deviceName);
 }
 
-int BLEMidiClientClass::scan()
+unsigned int BLEMidiClientClass::scan()
 {
     debug.println("Beginning scan...");
     pBLEScan = NimBLEDevice::getScan();
@@ -15,44 +15,40 @@ int BLEMidiClientClass::scan()
     pBLEScan->setInterval(100);
     pBLEScan->setWindow(99);
     pBLEScan->clearResults();
-    foundMidiDevices.clear();
-    NimBLEScanResults foundDevices = pBLEScan->getResults(3000, false);
-    debug.printf("Found %d BLE device(s)\n", foundDevices.getCount());
-    for(int i=0; i<foundDevices.getCount(); i++) {
-        const NimBLEAdvertisedDevice *device = foundDevices.getDevice(i);
-        auto deviceStr = "name = \"" + device->getName() + "\", address = "  + device->getAddress().toString();
-        if (device->haveServiceUUID() && device->isAdvertisingService(BLEUUID(MIDI_SERVICE_UUID))) {
-            debug.println((" - BLE MIDI device : " + deviceStr).c_str());
-            foundMidiDevices.push_back(device);
-        }
-        else
-            debug.println((" - Other type of BLE device : " + deviceStr).c_str());
-        debug.printf("Total of BLE MIDI devices : %d\n", foundMidiDevices.size());
-    }
-    return foundMidiDevices.size();
+    scanResults = pBLEScan->getResults(3000, false);
+    debug.printf("Found %d BLE device(s)\n", scanResults.getCount());
+    return scanResults.getCount();
 }
 
-const NimBLEAdvertisedDevice* BLEMidiClientClass::getScannedDevice(uint32_t deviceIndex)
-{
-    if(deviceIndex >= foundMidiDevices.size()) {
-        debug.println("Scanned device not found because requested index is greater than the devices list");
-        return nullptr;
+String BLEMidiClientClass::deviceName(unsigned int deviceIndex) {
+    if(deviceIndex >= scanResults.getCount()) {
+        debug.printf("warning: deviceName(): invalid index %u (%u devices found)\n", deviceIndex, scanResults.getCount());
+        return "";
     }
-    return foundMidiDevices.at(deviceIndex);
+    return String(scanResults.getDevice(deviceIndex)->getName().c_str());
 }
 
-bool BLEMidiClientClass::connect(uint32_t deviceIndex)
+String BLEMidiClientClass::deviceMacAddress(unsigned int deviceIndex) {
+    if(deviceIndex >= scanResults.getCount()) {
+        debug.printf("warning: deviceMacAddress(): invalid index %u (%u devices found)\n", deviceIndex, scanResults.getCount());
+        return "";
+    }
+    return String(scanResults.getDevice(deviceIndex)->getAddress().toString().c_str());
+}
+
+bool BLEMidiClientClass::connect(unsigned int deviceIndex)
 {
     debug.printf("Connecting to device number %d\n", deviceIndex);
-    if(deviceIndex >= foundMidiDevices.size()) {
+    if(deviceIndex >= scanResults.getCount()) {
         debug.println("Cannot connect : device index is greater than the size of the MIDI devices list.");
         return false;
     }
-    const NimBLEAdvertisedDevice* device = foundMidiDevices.at(deviceIndex);
+    const NimBLEAdvertisedDevice* device = scanResults.getDevice(deviceIndex);
     if(device == nullptr)
         return false;
     debug.printf("Address of the device : %s\n", device->getAddress().toString().c_str());
     NimBLEClient* pClient = NimBLEDevice::createClient();
+    debug.println("Registering callbacks");
     pClient->setClientCallbacks(new ClientCallbacks(connected, onConnectCallback, onDisconnectCallback));
     debug.println("pClient->connect()");
     if(!pClient->connect(device))
@@ -113,7 +109,7 @@ void ClientCallbacks::onConnect(NimBLEClient *pClient)
         onConnectCallback();
 }
 
-void ClientCallbacks::onDisconnect(NimBLEClient *pClient)
+void ClientCallbacks::onDisconnect(NimBLEClient *pClient, int reason)
 {
     connected = false;
     if(onDisconnectCallback != nullptr)
