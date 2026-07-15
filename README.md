@@ -34,6 +34,12 @@ Check the header file [here](https://github.com/max22-/ESP32-BLE-MIDI/blob/maste
 Changes
 -------
 
+  - v0.4.0
+    - 2026-07-15
+      - Integration of Nimble v2.x
+      - **API change for BLE client** : previously, a scan filtered the devices that advertised a MIDI service. But not all devices advertise a MIDI service, even if they support it (for example the MVAVE Chocolat footswitch). Now, a scan returns all the BLE devices, you have to check which one is your device, then connect to it.
+      - Added an example for the [MVAVE Chocolate footswitch](https://www.m-vave.com/product?id=chocolate)
+
   - v0.3.2
     - 2023-04-25
       - Added BLEMidi::end() to stop the BLE client or server.
