@@ -28,7 +28,7 @@ class CharacteristicCallback: public NimBLECharacteristicCallbacks {
 public:
     CharacteristicCallback(std::function<void(uint8_t*, uint8_t)> onWriteCallback);
 private:
-    void onWrite(NimBLECharacteristic *pCharacteristic);
+    void onWrite(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo& connInfo) override;
     std::function<void(uint8_t*, uint8_t)> onWriteCallback = nullptr;
 };
 

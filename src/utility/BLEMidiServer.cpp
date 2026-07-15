@@ -54,7 +54,7 @@ void BLEMidiServerClass::onDisconnect(NimBLEServer* pServer, NimBLEConnInfo& con
 
 CharacteristicCallback::CharacteristicCallback(std::function<void(uint8_t*, uint8_t)> onWriteCallback) : onWriteCallback(onWriteCallback) {}
 
-void CharacteristicCallback::onWrite(NimBLECharacteristic *pCharacteristic)
+void CharacteristicCallback::onWrite(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo& connInfo)
 {
     std::string rxValue = pCharacteristic->getValue();
 
