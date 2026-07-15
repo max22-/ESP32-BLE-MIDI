@@ -25,7 +25,7 @@ void loop() {
     }
     else {
         Serial.println("Sending drum on command");
-        // Real world example : it starts the drum function of the NUX Mighty Lit BT guitar amplifier
+        // Real world example : it starts the drum function of the NUX Mighty Lite BT guitar amplifier
         // https://www.nuxefx.com/mighty-lite-bt.html
         // This is the only bluetooth controllable device that I have.
         BLEMidiClient.controlChange(0, 122, 127);
